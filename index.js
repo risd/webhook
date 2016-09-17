@@ -127,7 +127,7 @@ module.exports = function (argv) {
 
     program
       .command('preset-build')
-      .description('Generates a preset-data.json file from a webhook directory')
+      .description('Generates a .preset-data.json file from a webhook directory')
       .action(function () {
         require('./lib/preset-build.js')(false, {
           firebase: program.firebase,
@@ -142,7 +142,7 @@ module.exports = function (argv) {
 
     program
       .command('preset-build-all')
-      .description('Generates a preset-data.json file from a webhook directory which includes data')
+      .description('Generates a .preset-data.json file from a webhook directory which includes data')
       .action(function () {
         require('./lib/preset-build.js')(true, {
           firebase: program.firebase,
