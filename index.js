@@ -11,6 +11,8 @@ module.exports = function (argv) {
       .version(require('./package.json').version)
       .option('-f, --firebase [firebasename]', 'Use the specified firebase instead of webhook main, for self hosting mode')
       .option('-s, --server [uploadserver]', 'Use this server when uploading files, for self hosting mode')
+      .option('-m, --embedly [embedly]', 'Use this embedly key when writing .firebase.conf, for self hosting mode')
+      .option('-b, --generate [generate]', 'Use this generator URL when creating a new , for self hosting mode')
       .option('-n, --npm [npmPath]', 'Use this npm executable over the default one (npm)')
       .option('-o, --node [nodePath]', 'Use this node executable over the default one (node)')
       .option('-g, --grunt [gruntPath]', 'Use this grunt executable over the default one (grunt)')
@@ -32,6 +34,9 @@ module.exports = function (argv) {
         require('./lib/create.js')({
           siteName: siteName,
           firebase: program.firebase,
+          embedly: program.embedly,
+          server: program.server,
+          generate: program.generate,
           npm: program.npm,
           node: program.node,
           grunt: program.grunt,
@@ -78,6 +83,7 @@ module.exports = function (argv) {
           siteName: siteName,
           firebase: program.firebase,
           server: program.server,
+          embedly: program.embedly,
           npm: program.npm,
           node: program.node,
           grunt: program.grunt,
@@ -101,6 +107,7 @@ module.exports = function (argv) {
           siteName: siteName,
           firebase: program.firebase,
           server: program.server,
+          embedly: program.embedly,
           npm: program.npm,
           node: program.node,
           grunt: program.grunt,
@@ -136,7 +143,8 @@ module.exports = function (argv) {
           node: program.node,
           grunt: program.grunt,
           token: program.token,
-          email: program.email
+          email: program.email,
+          toFile: null  // use the default
         });
       });
 
@@ -151,7 +159,40 @@ module.exports = function (argv) {
           node: program.node,
           grunt: program.grunt,
           token: program.token,
-          email: program.email
+          email: program.email,
+          toFile: null  // use the default
+        });
+      });
+
+    program
+      .command('backup <toFile>')
+      .description('Generates a backup JSON file at the <toFile> from a webhook directory which includes data')
+      .action(function (toFile) {
+        require('./lib/preset-build.js')(true, {
+          firebase: program.firebase,
+          server: program.server,
+          npm: program.npm,
+          node: program.node,
+          grunt: program.grunt,
+          token: program.token,
+          email: program.email,
+          toFile: toFile
+        });
+      });
+
+    program
+      .command('restore <fromFile>')
+      .description('Restores database to state captured in backup file, such as one generated from `wh backup`')
+      .action(function (fromFile) {
+        require('./lib/restore.js')(true, {
+          firebase: program.firebase,
+          server: program.server,
+          npm: program.npm,
+          node: program.node,
+          grunt: program.grunt,
+          token: program.token,
+          email: program.email,
+          fromFile: fromFile
         });
       });
 
@@ -162,6 +203,7 @@ module.exports = function (argv) {
         require('./lib/update.js')({
           firebase: program.firebase,
           server: program.server,
+          embedly: program.embedly,
           npm: program.npm,
           node: program.node,
           grunt: program.grunt,
@@ -225,6 +267,7 @@ module.exports = function (argv) {
       .action(function() {
         console.log(program.firebase);
         console.log(program.server);
+        console.log(program.embedly);
         console.log(program.npm);
         console.log(program.node);
         console.log(program.grunt);
