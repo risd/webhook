@@ -12,7 +12,7 @@ module.exports = function (argv) {
       .option('-f, --firebase [firebasename]', 'Use the specified firebase instead of webhook main, for self hosting mode')
       .option('-s, --server [uploadserver]', 'Use this server when uploading files, for self hosting mode')
       .option('-m, --embedly [embedly]', 'Use this embedly key when writing .firebase.conf, for self hosting mode')
-      .option('-b, --generate [generate]', 'Use this generator URL when creating a new , for self hosting mode')
+      .option('-b, --generate [generate]', 'Use this generator URL when creating a new site, for self hosting mode')
       .option('-n, --npm [npmPath]', 'Use this npm executable over the default one (npm)')
       .option('-o, --node [nodePath]', 'Use this node executable over the default one (node)')
       .option('-g, --grunt [gruntPath]', 'Use this grunt executable over the default one (grunt)')
