@@ -13,6 +13,8 @@ module.exports = function (argv) {
       .option('-s, --server [uploadserver]', 'Use this server when uploading files, for self hosting mode')
       .option('-m, --embedly [embedly]', 'Use this embedly key when writing .firebase.conf, for self hosting mode')
       .option('-b, --generate [generate]', 'Use this generator URL when creating a new site, for self hosting mode')
+      .option('-h, --imgix_host [imgixhost]', 'Use this URL for imgix CDN serving, for self hosting mode')
+      .option('-x, --imgix_secret [imgixsecret]', 'Use this secret to sign imgix URLs, for self hosting mode')
       .option('-n, --npm [npmPath]', 'Use this npm executable over the default one (npm)')
       .option('-o, --node [nodePath]', 'Use this node executable over the default one (node)')
       .option('-g, --grunt [gruntPath]', 'Use this grunt executable over the default one (grunt)')
@@ -37,6 +39,8 @@ module.exports = function (argv) {
           embedly: program.embedly,
           server: program.server,
           generate: program.generate,
+          imgix_host: program.imgix_host,
+          imgix_secret: program.imgix_secret,
           npm: program.npm,
           node: program.node,
           grunt: program.grunt,
@@ -84,6 +88,9 @@ module.exports = function (argv) {
           firebase: program.firebase,
           server: program.server,
           embedly: program.embedly,
+          generate: program.generate,
+          imgix_host: program.imgix_host,
+          imgix_secret: program.imgix_secret,
           npm: program.npm,
           node: program.node,
           grunt: program.grunt,
@@ -108,6 +115,9 @@ module.exports = function (argv) {
           firebase: program.firebase,
           server: program.server,
           embedly: program.embedly,
+          generate: program.generate,
+          imgix_host: program.imgix_host,
+          imgix_secret: program.imgix_secret,
           npm: program.npm,
           node: program.node,
           grunt: program.grunt,
@@ -268,6 +278,9 @@ module.exports = function (argv) {
         console.log(program.firebase);
         console.log(program.server);
         console.log(program.embedly);
+        console.log(program.generate);
+        console.log(program.imgix_host);
+        console.log(program.imgix_secret);
         console.log(program.npm);
         console.log(program.node);
         console.log(program.grunt);
