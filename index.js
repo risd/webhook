@@ -175,7 +175,7 @@ module.exports = function (argv) {
       });
 
     program
-      .command('backup <toFile>')
+      .command('backup [toFile]')
       .description('Generates a backup JSON file at the <toFile> from a webhook directory which includes data')
       .action(function (toFile) {
         require('./lib/preset-build.js')(true, {
