@@ -27,7 +27,10 @@ module.exports = function (argv) {
       .command('create <siteName>')
       .description('Create a new webhook site')
       .action(function (siteName) {
-        var siteName = siteName.toLowerCase();
+        if ( Array.isArray( siteName ) )
+          siteName = siteName[0]
+
+        siteName = siteName.toLowerCase();
 
         if(program.firebase) {
           siteName = siteName.replace(/\./g, ',1');
