@@ -30,7 +30,14 @@ module.exports = function (argv) {
         if ( Array.isArray( siteName ) )
           siteName = siteName[0]
 
-        siteName = siteName.toLowerCase();
+        try {
+          siteName = siteName.toLowerCase();  
+        } catch (error) {
+          throw new Error(
+            'siteName: ' + siteName + '\n' +
+            'Requires a valid site name.' )
+        }
+        
 
         if(program.firebase) {
           siteName = siteName.replace(/\./g, ',1');
@@ -58,7 +65,16 @@ module.exports = function (argv) {
       .command('delete <siteName>')
       .description('Delete a site from webhook')
       .action(function (siteName) {
-        var siteName = siteName.toLowerCase();
+        if ( Array.isArray( siteName ) )
+          siteName = siteName[0]
+
+        try {
+          siteName = siteName.toLowerCase();  
+        } catch (error) {
+          throw new Error(
+            'siteName: ' + siteName + '\n' +
+            'Requires a valid site name.' )
+        }
 
         if(program.firebase) {
           siteName = siteName.replace(/\./g, ',1');
@@ -80,7 +96,16 @@ module.exports = function (argv) {
       .command('init <siteName>')
       .description('Initializes a site with configuration files')
       .action(function (siteName) {
-        var siteName = siteName.toLowerCase();
+        if ( Array.isArray( siteName ) )
+          siteName = siteName[0]
+
+        try {
+          siteName = siteName.toLowerCase();  
+        } catch (error) {
+          throw new Error(
+            'siteName: ' + siteName + '\n' +
+            'Requires a valid site name.' )
+        }
 
         if(program.firebase) {
           siteName = siteName.replace(/\./g, ',1');
@@ -104,10 +129,19 @@ module.exports = function (argv) {
       });
 
     program
-      .command('recreate <siteName>')
+      .command('recreate [siteName]')
       .description('Recreates a site using the last version of the site uploaded to the webhook servers.')
       .action(function (siteName) {
-        var siteName = siteName.toLowerCase();
+        if ( Array.isArray( siteName ) )
+          siteName = siteName[0]
+        
+        try {
+          siteName = siteName.toLowerCase();  
+        } catch (error) {
+          throw new Error(
+            'siteName: ' + siteName + '\n' +
+            'Requires a valid site name.' )
+        }
 
         if(program.firebase) {
           siteName = siteName.replace(/\./g, ',1');
@@ -178,9 +212,12 @@ module.exports = function (argv) {
       });
 
     program
-      .command('backup [toFile]')
+      .command('backup <toFile>')
       .description('Generates a backup JSON file at the <toFile> from a webhook directory which includes data')
       .action(function (toFile) {
+        if ( Array.isArray( toFile ) )
+          toFile = toFile[0]
+
         require('./lib/preset-build.js')(true, {
           firebase: program.firebase,
           server: program.server,
@@ -197,6 +234,9 @@ module.exports = function (argv) {
       .command('restore <fromFile>')
       .description('Restores database to state captured in backup file, such as one generated from `wh backup`')
       .action(function (fromFile) {
+        if ( Array.isArray( toFile ) )
+          toFile = toFile[0]
+
         require('./lib/restore.js')(true, {
           firebase: program.firebase,
           server: program.server,
