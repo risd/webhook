@@ -234,8 +234,8 @@ module.exports = function (argv) {
       .command('restore <fromFile>')
       .description('Restores database to state captured in backup file, such as one generated from `wh backup`')
       .action(function (fromFile) {
-        if ( Array.isArray( toFile ) )
-          toFile = toFile[0]
+        if ( Array.isArray( fromFile ) )
+          fromFile = fromFile[0]
 
         require('./lib/restore.js')(true, {
           firebase: program.firebase,
