@@ -1,6 +1,6 @@
 {
   "name": "wh",
-  "version": "1.0.50",
+  "version": "1.0.51",
   "description": "Webhook is the easiest way to build a custom CMS for your next website.",
   "keywords": [
     "webhook",
@@ -43,6 +43,7 @@
     "node-uuid": "^1.4.7",
     "request": "~2.31.0",
     "restler": "~3.1.0",
+    "webhook-deploy-configuration": "^1.0.0",
     "win-spawn": "~2.0.0",
     "wrench": "~1.5.4"
   }
