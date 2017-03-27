@@ -7,8 +7,8 @@ var version = 'v24';
 
 module.exports = function (argv) {
   require('./lib/notifier.js')(version, function() {
-    program
-      .version(require('./package.json').version)
+    
+    program.version(require('./package.json').version)
       .option('-f, --firebase [firebasename]', 'Use the specified firebase instead of webhook main, for self hosting mode')
       .option('-s, --server [uploadserver]', 'Use this server when uploading files, for self hosting mode')
       .option('-m, --embedly [embedly]', 'Use this embedly key when writing .firebase.conf, for self hosting mode')
@@ -23,8 +23,7 @@ module.exports = function (argv) {
       .option('-c, --cache [cacheDir]', 'Sets the directory to use for npm cache')
       .option('-e, --email [email]', 'The e-mail address to use when using the --token option');
 
-    program
-      .command('create <siteName>')
+    program.command('create <siteName>')
       .description('Create a new webhook site')
       .action(function (siteName) {
         if ( Array.isArray( siteName ) )
@@ -61,8 +60,7 @@ module.exports = function (argv) {
         });
       });
 
-    program
-      .command('delete <siteName>')
+    program.command('delete <siteName>')
       .description('Delete a site from webhook')
       .action(function (siteName) {
         if ( Array.isArray( siteName ) )
@@ -92,8 +90,7 @@ module.exports = function (argv) {
         });
       });
 
-    program
-      .command('init <siteName>')
+    program.command('init <siteName>')
       .description('Initializes a site with configuration files')
       .action(function (siteName) {
         if ( Array.isArray( siteName ) )
@@ -128,8 +125,7 @@ module.exports = function (argv) {
         });
       });
 
-    program
-      .command('recreate [siteName]')
+    program.command('recreate [siteName]')
       .description('Recreates a site using the last version of the site uploaded to the webhook servers.')
       .action(function (siteName) {
         if ( Array.isArray( siteName ) )
@@ -164,8 +160,7 @@ module.exports = function (argv) {
         });
       });
 
-    program
-      .command('list-sites')
+    program.command('list-sites')
       .description('Lists all the sites that the user is an owner/user on')
       .action(function () {
         require('./lib/list-sites.js')({
@@ -179,8 +174,7 @@ module.exports = function (argv) {
         });
       });
 
-    program
-      .command('preset-build')
+    program.command('preset-build')
       .description('Generates a .preset-data.json file from a webhook directory')
       .action(function () {
         require('./lib/preset-build.js')(false, {
@@ -195,8 +189,7 @@ module.exports = function (argv) {
         });
       });
 
-    program
-      .command('preset-build-all')
+    program.command('preset-build-all')
       .description('Generates a .preset-data.json file from a webhook directory which includes data')
       .action(function () {
         require('./lib/preset-build.js')(true, {
@@ -211,8 +204,7 @@ module.exports = function (argv) {
         });
       });
 
-    program
-      .command('backup <toFile>')
+    program.command('backup <toFile>')
       .description('Generates a backup JSON file at the <toFile> from a webhook directory which includes data')
       .action(function (toFile) {
         if ( Array.isArray( toFile ) )
@@ -230,8 +222,7 @@ module.exports = function (argv) {
         });
       });
 
-    program
-      .command('restore <fromFile>')
+    program.command('restore <fromFile>')
       .description('Restores database to state captured in backup file, such as one generated from `wh backup`')
       .action(function (fromFile) {
         if ( Array.isArray( fromFile ) )
@@ -249,8 +240,7 @@ module.exports = function (argv) {
         });
       });
 
-    program
-      .command('update')
+    program.command('update')
       .description('Updates a webhook site with the latest generate code')
       .action(function () {
         require('./lib/update.js')({
@@ -267,8 +257,7 @@ module.exports = function (argv) {
         });
       });
 
-    program
-      .command('push')
+    program.command('push')
       .description('Push webhook directory to server')
       .action(function () {
         require('./lib/push.js')({
@@ -282,8 +271,7 @@ module.exports = function (argv) {
         });
       });
       
-    program
-      .command('deploy')
+    program.command('deploy')
       .description('Push webhook directory to server')
       .action(function () {
         require('./lib/push.js')({
@@ -297,8 +285,45 @@ module.exports = function (argv) {
         });
       });
 
-    program
-      .command('serve [port]')
+    program.command('deploy:set [filename]')
+      .description('Sets the deploys for webhook')
+      .action(function (filename) {
+        require('./lib/deploy-environments.js')({
+          deploy_file: filename,
+          firebase: program.firebase,
+        })
+      })
+
+    program.command('reset-keys')
+    	.description('Resets user passwords and site keys.')
+    	.action(function () {
+    		require('./lib/reset-keys')({
+    			firebaseName: program.firebase,
+    			firebaseToken: program.token,
+    		})
+    	})
+
+    program.command('reset-keys:sites')
+    	.description('Resets site keys.')
+    	.action(function () {
+    		require('./lib/reset-keys')({
+    			firebaseName: program.firebase,
+    			firebaseToken: program.token,
+    			resetUserPasswords: false,
+    		})
+    	})
+
+   	program.command('reset-keys:users')
+    	.description('Resets site keys.')
+    	.action(function () {
+    		require('./lib/reset-keys')({
+    			firebaseName: program.firebase,
+    			firebaseToken: program.token,
+    			resetSiteKeys: false,
+    		})
+    	})
+
+    program.command('serve [port]')
       .description('Serves a webhook site locally')
       .action(function (port) {
         require('./lib/serve.js')({
@@ -314,8 +339,7 @@ module.exports = function (argv) {
         });
       });
 
-    program
-      .command('echo-options')
+    program.command('echo-options')
       .description('Echos options passed into this command, used for debugging')
       .action(function() {
         console.log(program.firebase);
@@ -339,3 +363,19 @@ module.exports = function (argv) {
 };
 
 module.exports.version = version;
+module.exports.lib = {
+  init: require('./lib/init.js'),
+  create: require('./lib/create.js'),
+  recreate: require('./lib/recreate.js'),
+  delete: require('./lib/delete.js'),
+  push: require( './lib/push.js' ),
+  deploys: require( './lib/deploys.js' ),
+  resetKeys: require( './lib/reset-keys/index.js' ),
+  user: require( './lib/user.js' ),
+  listSites: require( './lib/list-sites.js' ),
+  presetBuild: require( './lib/preset-build.js' ),
+  restore: require( './lib/restore.js' ),
+  update: require( './lib/update.js' ),
+  serve: require( './lib/serve.js' ),
+  // echoOptions
+}
