@@ -285,15 +285,6 @@ module.exports = function (argv) {
         });
       });
 
-    program.command('deploy:set [filename]')
-      .description('Sets the deploys for webhook')
-      .action(function (filename) {
-        require('./lib/deploy-environments.js')({
-          deploy_file: filename,
-          firebase: program.firebase,
-        })
-      })
-
     program.command('reset-keys')
     	.description('Resets user passwords and site keys.')
     	.action(function () {
