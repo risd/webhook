@@ -21,7 +21,8 @@ module.exports = function (argv) {
       .option('-t, --token [authToken]', 'Use this auth token for firebase instead of prompting for login')
       .option('-f, --force [force]', 'If true, will force update')
       .option('-c, --cache [cacheDir]', 'Sets the directory to use for npm cache')
-      .option('-e, --email [email]', 'The e-mail address to use when using the --token option');
+      .option('-e, --email [email]', 'The e-mail address to use when using the --token option')
+      .option('--types [contentTypes]', 'Clone these content types. If omitted, all content types are cloned.');
 
     program.command('create <siteName>')
       .description('Create a new webhook site')
@@ -330,6 +331,23 @@ module.exports = function (argv) {
         });
       });
 
+    program.command('clone-content-under <namespace>')
+      .description('Clones content type and current data under a new namespace.')
+      .action(function (namespace) {
+        
+        var contentTypes = ((typeof program.types === 'string')
+          ? program.types.split(',')
+          : '*' )
+
+        require('./lib/clone-content-under.js')({
+          firebaseName: program.firebase,
+          firebaseToken: program.token,
+          namespace: namespace,
+          contentTypes: contentTypes,
+        });
+
+      });
+
     program.command('echo-options')
       .description('Echos options passed into this command, used for debugging')
       .action(function() {
@@ -345,7 +363,7 @@ module.exports = function (argv) {
         console.log(program.token);
         console.log(program.email);
       });
-    
+
     program
       .parse(argv);
 
@@ -368,5 +386,6 @@ module.exports.lib = {
   restore: require( './lib/restore.js' ),
   update: require( './lib/update.js' ),
   serve: require( './lib/serve.js' ),
+  cloneContentUnder: require('./lib/clone-content-under.js'),
   // echoOptions
 }
