@@ -22,7 +22,8 @@ module.exports = function (argv) {
       .option('-f, --force [force]', 'If true, will force update')
       .option('-c, --cache [cacheDir]', 'Sets the directory to use for npm cache')
       .option('-e, --email [email]', 'The e-mail address to use when using the --token option')
-      .option('--types [contentTypes]', 'Clone these content types. If omitted, all content types are cloned.');
+      .option('--types [contentTypes]', 'Clone these content types. If omitted, all content types are cloned.')
+      .option('--skipBuild', 'Skips the site build as a step to ensure templates are okay before deploying.');
 
     program.command('create <siteName>')
       .description('Create a new webhook site')
@@ -282,7 +283,8 @@ module.exports = function (argv) {
           node: program.node,
           grunt: program.grunt,
           token: program.token,
-          email: program.email
+          email: program.email,
+          skipBuild: program.skipBuild,
         });
       });
 
