@@ -249,6 +249,8 @@ module.exports = function (argv) {
           firebase: program.firebase,
           server: program.server,
           embedly: program.embedly,
+          imgix_host: program.imgix_host,
+          imgix_secret: program.imgix_secret,
           npm: program.npm,
           node: program.node,
           grunt: program.grunt,
@@ -329,7 +331,8 @@ module.exports = function (argv) {
           grunt: program.grunt,
           token: program.token,
           email: program.email,
-          cache: program.cache
+          cache: program.cache,
+          skipBuild: program.skipBuild,
         });
       });
 
