@@ -1,6 +1,6 @@
 {
   "name": "wh",
-  "version": "1.0.60",
+  "version": "1.0.61",
   "description": "Webhook is the easiest way to build a custom CMS for your next website.",
   "keywords": [
     "webhook",
@@ -23,7 +23,7 @@
   "license": "MIT",
   "preferGlobal": "true",
   "bugs": {
-    "url": "https://github.com/risd/webhook/issues",
+    "url": "https://github.com/risd/webhook/issues"
   },
   "homepage": "https://github.com/risd/webhook/",
   "readmeFile": "README.md",
