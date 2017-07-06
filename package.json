@@ -1,6 +1,6 @@
 {
   "name": "wh",
-  "version": "1.0.59",
+  "version": "1.0.60",
   "description": "Webhook is the easiest way to build a custom CMS for your next website.",
   "keywords": [
     "webhook",
@@ -12,7 +12,7 @@
   "bin": "./bin/wh",
   "repository": {
     "type": "git",
-    "url": "git://github.com/webhook/webhook.git"
+    "url": "git://github.com/risd/webhook.git"
   },
   "author": {
     "name": "Ian Kelly"
@@ -23,10 +23,9 @@
   "license": "MIT",
   "preferGlobal": "true",
   "bugs": {
-    "url": "https://github.com/webhook/webhook/issues",
-    "email": "support@webhook.com"
+    "url": "https://github.com/risd/webhook/issues",
   },
-  "homepage": "http://www.webhook.com/",
+  "homepage": "https://github.com/risd/webhook/",
   "readmeFile": "README.md",
   "dependencies": {
     "adm-zip": "~0.4.3",
@@ -35,6 +34,7 @@
     "colors": "~0.6.2",
     "commander": "~2.1.0",
     "firebase": "^2.4.2",
+    "gcloud-site-dir": "^1.0.0",
     "git-branch": "^0.3.0",
     "github": "~0.1.12",
     "inquirer": "~0.5.1",

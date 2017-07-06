@@ -1,12 +1,12 @@
-# Webhook Overview
+# risd/webhook Overview
 
 This repository is for the Webhook command line tools. There are several other repositories in Webhook's core.
 
-* [webhook](https://github.com/webhook/webhook) - The Webhook command line tools.
-* [webhook-generate](https://github.com/webhook/webhook-generate) - The local runserver for Webhook.
-* [webhook-cms](https://github.com/webhook/webhook-cms) - The CMS layer and frotend GUI. A single page Ember app.
-* [webhook-server-open](https://github.com/webhook/webhook-server-open) - The production server for serving and regenerating live Webhook sites.
-* [webhook-images](https://github.com/webhook/webhook-images) - Image resizing for the Webhook frontend. For Google App Engine.
+* [webhook](https://github.com/risd/webhook) - The Webhook command line tools.
+* [webhook-generate](https://github.com/risd/webhook-generate) - The local runserver for Webhook.
+* [webhook-cms](https://github.com/risd/webhook-cms) - The CMS layer and frotend GUI. A single page Ember app.
+* [webhook-server-open](https://github.com/risd/webhook-server-open) - The production server for serving and regenerating live Webhook sites.
+* [webhook-images](https://github.com/risd/webhook-images) - Image resizing for the Webhook frontend. For Google App Engine.
 
 If you are interested in self-hosting Webhook, [check the instructions here](http://www.webhook.com/docs/self-host-webhook/).
 
@@ -29,7 +29,7 @@ terminal and run:
 npm install -g grunt wh
 ```
 
-## Webhook Command Line
+## risd/webhook Command Line
 
 The Webhook CLI has the following commands:
 
@@ -54,5 +54,3 @@ grunt clean                       # Deletes the files in the .build/ directory.
 grunt scaffolding:typename        # Generates scaffolding HTML for a passed content-type from the CMS.
 grunt build                       # Runs clean, and then rebuilds the .build/ directory.
 ```
-
-

@@ -23,7 +23,9 @@ module.exports = function (argv) {
       .option('-c, --cache [cacheDir]', 'Sets the directory to use for npm cache')
       .option('-e, --email [email]', 'The e-mail address to use when using the --token option')
       .option('--types [contentTypes]', 'Clone these content types. If omitted, all content types are cloned.')
-      .option('--skipBuild', 'Skips the site build as a step to ensure templates are okay before deploying.');
+      .option('--skipBuild', 'Skips the site build as a step to ensure templates are okay before deploying.')
+      .option('--gcloud [gcloud]', 'Path to Google Project JSON file.')
+      .option('--buildFolder [buildFolder]', 'Path to local build folder.');
 
     program.command('create <siteName>')
       .description('Create a new webhook site')
@@ -353,6 +355,28 @@ module.exports = function (argv) {
 
       });
 
+    program.command('deploy-static <siteName>')
+      .description('')
+      .action(function ( siteName ) {
+        if ( Array.isArray( siteName ) )
+          siteName = siteName[0]
+
+        try {
+          siteName = siteName.toLowerCase();  
+        } catch (error) {
+          throw new Error(
+            'siteName: ' + siteName + '\n' +
+            'Requires a valid site name.' )
+        }
+
+        require('./lib/deploy-static.js')({
+          siteName: siteName,
+          gcloud: program.gcloud,
+          skipBuild: program.skipBuild,
+          buildFolder: program.buildFolder,
+        })
+      })
+
     program.command('echo-options')
       .description('Echos options passed into this command, used for debugging')
       .action(function() {
@@ -392,5 +416,6 @@ module.exports.lib = {
   update: require( './lib/update.js' ),
   serve: require( './lib/serve.js' ),
   cloneContentUnder: require('./lib/clone-content-under.js'),
+  deployStatic: require('./lib/deploy-static.js'),
   // echoOptions
 }
