@@ -356,7 +356,7 @@ module.exports = function (argv) {
       });
 
     program.command('deploy-static <siteName>')
-      .description('')
+      .description('Push a static snapshot of the current site, or --buildFolder.')
       .action(function ( siteName ) {
         if ( Array.isArray( siteName ) )
           siteName = siteName[0]
@@ -372,7 +372,6 @@ module.exports = function (argv) {
         require('./lib/deploy-static.js')({
           siteName: siteName,
           gcloud: program.gcloud,
-          skipBuild: program.skipBuild,
           buildFolder: program.buildFolder,
         })
       })
