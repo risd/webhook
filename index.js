@@ -25,7 +25,9 @@ module.exports = function (argv) {
       .option('--types [contentTypes]', 'Clone these content types. If omitted, all content types are cloned.')
       .option('--skipBuild', 'Skips the site build as a step to ensure templates are okay before deploying.')
       .option('--gcloud [gcloud]', 'Path to Google Project JSON file.')
-      .option('--buildFolder [buildFolder]', 'Path to local build folder.');
+      .option('--staticFolder [staticFolder]', 'Path to local folder to push folder.')
+      .option('--staticPrefix [staticPrefix]', 'Prefix to add to the static directory being pushed.')
+      .option('--gitBranch [gitBranch]', 'Git branch to use, instead of the current branch.')
 
     program.command('create <siteName>')
       .description('Create a new webhook site')
@@ -293,33 +295,33 @@ module.exports = function (argv) {
       });
 
     program.command('reset-keys')
-    	.description('Resets user passwords and site keys.')
-    	.action(function () {
-    		require('./lib/reset-keys')({
-    			firebaseName: program.firebase,
-    			firebaseToken: program.token,
-    		})
-    	})
+      .description('Resets user passwords and site keys.')
+      .action(function () {
+        require('./lib/reset-keys')({
+          firebaseName: program.firebase,
+          firebaseToken: program.token,
+        })
+      })
 
     program.command('reset-keys:sites')
-    	.description('Resets site keys.')
-    	.action(function () {
-    		require('./lib/reset-keys')({
-    			firebaseName: program.firebase,
-    			firebaseToken: program.token,
-    			resetUserPasswords: false,
-    		})
-    	})
+      .description('Resets site keys.')
+      .action(function () {
+        require('./lib/reset-keys')({
+          firebaseName: program.firebase,
+          firebaseToken: program.token,
+          resetUserPasswords: false,
+        })
+      })
 
-   	program.command('reset-keys:users')
-    	.description('Resets site keys.')
-    	.action(function () {
-    		require('./lib/reset-keys')({
-    			firebaseName: program.firebase,
-    			firebaseToken: program.token,
-    			resetSiteKeys: false,
-    		})
-    	})
+     program.command('reset-keys:users')
+      .description('Resets site keys.')
+      .action(function () {
+        require('./lib/reset-keys')({
+          firebaseName: program.firebase,
+          firebaseToken: program.token,
+          resetSiteKeys: false,
+        })
+      })
 
     program.command('serve [port]')
       .description('Serves a webhook site locally')
@@ -355,24 +357,14 @@ module.exports = function (argv) {
 
       });
 
-    program.command('deploy-static <siteName>')
-      .description('Push a static snapshot of the current site, or --buildFolder.')
-      .action(function ( siteName ) {
-        if ( Array.isArray( siteName ) )
-          siteName = siteName[0]
-
-        try {
-          siteName = siteName.toLowerCase();  
-        } catch (error) {
-          throw new Error(
-            'siteName: ' + siteName + '\n' +
-            'Requires a valid site name.' )
-        }
+    program.command('deploy-static')
+      .description('Push a static snapshot of the current site, or --staticFolder.')
+      .action(function () {
 
         require('./lib/deploy-static.js')({
-          siteName: siteName,
           gcloud: program.gcloud,
-          buildFolder: program.buildFolder,
+          staticFolder: program.staticFolder,
+          staticPrefix: program.staticPrefix,
         })
       })
 
