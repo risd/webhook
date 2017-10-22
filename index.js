@@ -408,5 +408,6 @@ module.exports.lib = {
   serve: require( './lib/serve.js' ),
   cloneContentUnder: require('./lib/clone-content-under.js'),
   deployStatic: require('./lib/deploy-static.js'),
+  util: require('./lib/util.js'),
   // echoOptions
 }
