@@ -409,5 +409,6 @@ module.exports.lib = {
   cloneContentUnder: require('./lib/clone-content-under.js'),
   deployStatic: require('./lib/deploy-static.js'),
   util: require('./lib/util.js'),
+  siteDir: require( 'gcloud-site-dir' ),
   // echoOptions
 }
