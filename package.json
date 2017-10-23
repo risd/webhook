@@ -1,6 +1,6 @@
 {
   "name": "wh",
-  "version": "1.0.70",
+  "version": "1.0.71",
   "description": "Webhook is the easiest way to build a custom CMS for your next website.",
   "keywords": [
     "webhook",
@@ -34,7 +34,7 @@
     "colors": "~0.6.2",
     "commander": "~2.1.0",
     "firebase": "^2.4.2",
-    "gcloud-site-dir": "^1.0.0",
+    "gcloud-site-dir": "^1.0.6",
     "git-branch": "^0.3.0",
     "github": "~0.1.12",
     "inquirer": "~0.5.1",
