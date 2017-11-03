@@ -14,6 +14,9 @@
     "type": "git",
     "url": "git://github.com/risd/webhook.git"
   },
+  "scripts": {
+    "test": "tape test/*.js"
+  },
   "author": {
     "name": "Ian Kelly"
   },
@@ -47,5 +50,9 @@
     "webhook-deploy-configuration": "^1.0.0",
     "win-spawn": "~2.0.0",
     "wrench": "~1.5.4"
+  },
+  "devDependencies": {
+    "dotenv-safe": "^4.0.4",
+    "tape": "^4.8.0"
   }
 }
