@@ -357,14 +357,15 @@ module.exports = function (argv) {
 
       });
 
-    program.command('deploy-static')
+    program.command('deploy-static <siteName>')
       .description('Push a static snapshot of the current site, or --staticFolder.')
-      .action(function () {
+      .action(function (siteName) {
 
         require('./lib/deploy-static.js')({
           gcloud: program.gcloud,
           staticFolder: program.staticFolder,
           staticPrefix: program.staticPrefix,
+          siteName: siteName,
         })
       })
 
