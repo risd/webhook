@@ -357,7 +357,7 @@ module.exports = function (argv) {
 
       });
 
-    program.command('deploy-static <siteName>')
+    program.command('deploy-static [siteName]')
       .description('Push a static snapshot of the current site, or --staticFolder.')
       .action(function (siteName) {
 
