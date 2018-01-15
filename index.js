@@ -294,6 +294,16 @@ module.exports = function (argv) {
         });
       });
 
+    program.command('map-domain <maskDomain> [contentDomain]')
+      .description('Configure the maskDomain to pull content from the contentDomain.')
+      .action(function ( maskDomain, contentDomain ) {
+        require('./lib/map-domain')({
+          firebaseName: program.firebase,
+          maskDomain: maskDomain,
+          contentDomain: contentDomain,
+        })
+      })
+
     program.command('reset-keys')
       .description('Resets user passwords and site keys.')
       .action(function () {
@@ -400,6 +410,7 @@ module.exports.lib = {
   delete: require('./lib/delete.js'),
   push: require( './lib/push.js' ),
   deploys: require( './lib/deploys.js' ),
+  mapDomain: require( './lib/map-domain.js' ),
   resetKeys: require( './lib/reset-keys/index.js' ),
   user: require( './lib/user.js' ),
   listSites: require( './lib/list-sites.js' ),
