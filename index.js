@@ -131,6 +131,41 @@ module.exports = function (argv) {
         });
       });
 
+    program.command('conf <siteName>')
+      .description('Initializes a site with configuration files. Assumes node_modules are already installed.')
+      .action(function (siteName) {
+        if ( Array.isArray( siteName ) )
+          siteName = siteName[0]
+
+        try {
+          siteName = siteName.toLowerCase();  
+        } catch (error) {
+          throw new Error(
+            'siteName: ' + siteName + '\n' +
+            'Requires a valid site name.' )
+        }
+
+        if(program.firebase) {
+          siteName = siteName.replace(/\./g, ',1');
+        }
+        
+        require('./lib/conf.js')({
+          siteName: siteName,
+          firebase: program.firebase,
+          server: program.server,
+          embedly: program.embedly,
+          generate: program.generate,
+          imgix_host: program.imgix_host,
+          imgix_secret: program.imgix_secret,
+          npm: program.npm,
+          node: program.node,
+          grunt: program.grunt,
+          token: program.token,
+          email: program.email,
+          cache: program.cache
+        });
+      });
+
     program.command('recreate [siteName]')
       .description('Recreates a site using the last version of the site uploaded to the webhook servers.')
       .action(function (siteName) {
@@ -405,6 +440,7 @@ module.exports = function (argv) {
 module.exports.version = version;
 module.exports.lib = {
   init: require('./lib/init.js'),
+  conf: require('./lib/conf.js'),
   create: require('./lib/create.js'),
   recreate: require('./lib/recreate.js'),
   delete: require('./lib/delete.js'),
