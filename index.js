@@ -448,7 +448,6 @@ module.exports.lib = {
   deploys: require( './lib/deploys.js' ),
   mapDomain: require( './lib/map-domain.js' ),
   resetKeys: require( './lib/reset-keys/index.js' ),
-  user: require( './lib/user.js' ),
   listSites: require( './lib/list-sites.js' ),
   presetBuild: require( './lib/preset-build.js' ),
   restore: require( './lib/restore.js' ),
