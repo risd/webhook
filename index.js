@@ -22,6 +22,7 @@ module.exports = function (argv) {
       .option('-f, --force [force]', 'If true, will force update')
       .option('-c, --cache [cacheDir]', 'Sets the directory to use for npm cache')
       .option('-e, --email [email]', 'The e-mail address to use when using the --token option')
+      .option('-d, --debug', 'Set to debug mode. Logs out progress through processes.')
       .option('--types [contentTypes]', 'Clone these content types. If omitted, all content types are cloned.')
       .option('--skipBuild', 'Skips the site build as a step to ensure templates are okay before deploying.')
       .option('--gcloud [gcloud]', 'Path to Google Project JSON file.')
@@ -403,7 +404,7 @@ module.exports = function (argv) {
       });
 
     program.command('deploy-static [siteName]')
-      .description('Push a static snapshot of the current site, or --staticFolder.')
+      .description('Push a static snapshot of the current site, or --staticFolder to domains configured via `wh deploys`.')
       .action(function (siteName) {
 
         require('./lib/deploy-static.js')({
@@ -411,6 +412,20 @@ module.exports = function (argv) {
           staticFolder: program.staticFolder,
           staticPrefix: program.staticPrefix,
           siteName: siteName,
+        })
+      })
+
+    program.command('push-static [domain]')
+      .description('Push a static directory (--staticFolder) to the domain passed in as the first argument, augmented by the current git branch (or --gitBranch value).')
+      .action(function (domain) {
+
+        require('./lib/push-static.js')({
+          debug: program.debug,
+          gcloud: program.gcloud,
+          gitBranch: program.gitBranch,
+          baseDomain: domain,
+          staticFolder: program.staticFolder,
+          staticPrefix: program.staticPrefix,
         })
       })
 
@@ -455,7 +470,8 @@ module.exports.lib = {
   serve: require( './lib/serve.js' ),
   cloneContentUnder: require('./lib/clone-content-under.js'),
   deployStatic: require('./lib/deploy-static.js'),
+  pushStatic: require('./lib/push-static.js'),
   util: require('./lib/util/index.js'),
-  siteDir: require( 'gcloud-site-dir' ),
+  siteDir: require( './lib/util/site-dir.js' ),
   // echoOptions
 }
