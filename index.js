@@ -28,7 +28,7 @@ module.exports = function (argv) {
       .option('--gcloud [gcloud]', 'Path to Google Project JSON file.')
       .option('--staticFolder [staticFolder]', 'Path to local folder to push folder.')
       .option('--staticPrefix [staticPrefix]', 'Prefix to add to the static directory being pushed.')
-      .option('--gitBranch [gitBranch]', 'Git branch to use, instead of the current branch.')
+      .option('--branch [branch]', 'Git branch to use, instead of the current branch.')
 
     program.command('create <siteName>')
       .description('Create a new webhook site')
@@ -422,7 +422,7 @@ module.exports = function (argv) {
         require('./lib/push-static.js')({
           debug: program.debug,
           gcloud: program.gcloud,
-          gitBranch: program.gitBranch,
+          branch: program.branch,
           baseDomain: domain,
           staticFolder: program.staticFolder,
           staticPrefix: program.staticPrefix,
