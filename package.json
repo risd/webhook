@@ -21,9 +21,6 @@
   "scripts": {
     "test": "tape test/*.js"
   },
-  "author": {
-    "name": "Ian Kelly"
-  },
   "license": "MIT",
   "preferGlobal": "true",
   "bugs": {
