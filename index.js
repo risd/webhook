@@ -10,6 +10,7 @@ module.exports = function (argv) {
     
     program.version(require('./package.json').version)
       .option('-f, --firebase [firebasename]', 'Use the specified firebase instead of webhook main, for self hosting mode')
+      .option('-t, --firebaseToken [firebaseToken]', 'Use this auth token for firebase instead of prompting for login')
       .option('-s, --server [uploadserver]', 'Use this server when uploading files, for self hosting mode')
       .option('-m, --embedly [embedly]', 'Use this embedly key when writing .firebase.conf, for self hosting mode')
       .option('-b, --generate [generate]', 'Use this generator URL when creating a new site, for self hosting mode')
@@ -18,7 +19,6 @@ module.exports = function (argv) {
       .option('-n, --npm [npmPath]', 'Use this npm executable over the default one (npm)')
       .option('-o, --node [nodePath]', 'Use this node executable over the default one (node)')
       .option('-g, --grunt [gruntPath]', 'Use this grunt executable over the default one (grunt)')
-      .option('-t, --token [authToken]', 'Use this auth token for firebase instead of prompting for login')
       .option('-f, --force [force]', 'If true, will force update')
       .option('-c, --cache [cacheDir]', 'Sets the directory to use for npm cache')
       .option('-e, --email [email]', 'The e-mail address to use when using the --token option')
@@ -29,6 +29,8 @@ module.exports = function (argv) {
       .option('--staticFolder [staticFolder]', 'Path to local folder to push folder.')
       .option('--staticPrefix [staticPrefix]', 'Prefix to add to the static directory being pushed.')
       .option('--branch [branch]', 'Git branch to use, instead of the current branch.')
+      .option('--firebaseAPIKey [firebaseAPIKey]', 'The Firebase web API key to use.')
+      .option('--platformName [platformName]', 'The name of the webhook publishing platform instance.')
 
     program.command('create <siteName>')
       .description('Create a new webhook site')
@@ -51,7 +53,7 @@ module.exports = function (argv) {
 
         require('./lib/create.js')({
           siteName: siteName,
-          firebase: program.firebase,
+          firebaseName: program.firebase,
           embedly: program.embedly,
           server: program.server,
           generate: program.generate,
@@ -60,7 +62,7 @@ module.exports = function (argv) {
           npm: program.npm,
           node: program.node,
           grunt: program.grunt,
-          token: program.token,
+          firebaseToken: program.firebaseToken,
           email: program.email,
           force: program.force,
           cache: program.cache
@@ -87,11 +89,11 @@ module.exports = function (argv) {
 
         require('./lib/delete.js')({
           siteName: siteName,
-          firebase: program.firebase,
+          firebaseName: program.firebase,
           npm: program.npm,
           node: program.node,
           grunt: program.grunt,
-          token: program.token,
+          firebaseToken: program.firebaseToken,
           email: program.email,
           force: program.force
         });
@@ -117,7 +119,7 @@ module.exports = function (argv) {
         
         require('./lib/init.js')({
           siteName: siteName,
-          firebase: program.firebase,
+          firebaseName: program.firebase,
           server: program.server,
           embedly: program.embedly,
           generate: program.generate,
@@ -126,7 +128,7 @@ module.exports = function (argv) {
           npm: program.npm,
           node: program.node,
           grunt: program.grunt,
-          token: program.token,
+          firebaseToken: program.firebaseToken,
           email: program.email,
           cache: program.cache
         });
@@ -152,7 +154,7 @@ module.exports = function (argv) {
         
         require('./lib/conf.js')({
           siteName: siteName,
-          firebase: program.firebase,
+          firebaseName: program.firebase,
           server: program.server,
           embedly: program.embedly,
           generate: program.generate,
@@ -161,7 +163,7 @@ module.exports = function (argv) {
           npm: program.npm,
           node: program.node,
           grunt: program.grunt,
-          token: program.token,
+          firebaseToken: program.firebaseToken,
           email: program.email,
           cache: program.cache
         });
@@ -187,7 +189,7 @@ module.exports = function (argv) {
         
         require('./lib/recreate.js')({
           siteName: siteName,
-          firebase: program.firebase,
+          firebaseName: program.firebase,
           server: program.server,
           embedly: program.embedly,
           generate: program.generate,
@@ -196,7 +198,7 @@ module.exports = function (argv) {
           npm: program.npm,
           node: program.node,
           grunt: program.grunt,
-          token: program.token,
+          firebaseToken: program.firebaseToken,
           email: program.email,
           cache: program.cache
         });
@@ -206,12 +208,12 @@ module.exports = function (argv) {
       .description('Lists all the sites that the user is an owner/user on')
       .action(function () {
         require('./lib/list-sites.js')({
-          firebase: program.firebase,
+          firebaseName: program.firebase,
           server: program.server,
           npm: program.npm,
           node: program.node,
           grunt: program.grunt,
-          token: program.token,
+          firebaseToken: program.firebaseToken,
           email: program.email
         });
       });
@@ -220,12 +222,12 @@ module.exports = function (argv) {
       .description('Generates a .preset-data.json file from a webhook directory')
       .action(function () {
         require('./lib/preset-build.js')(false, {
-          firebase: program.firebase,
+          firebaseName: program.firebase,
           server: program.server,
           npm: program.npm,
           node: program.node,
           grunt: program.grunt,
-          token: program.token,
+          firebaseToken: program.firebaseToken,
           email: program.email,
           toFile: null  // use the default
         });
@@ -235,12 +237,12 @@ module.exports = function (argv) {
       .description('Generates a .preset-data.json file from a webhook directory which includes data')
       .action(function () {
         require('./lib/preset-build.js')(true, {
-          firebase: program.firebase,
+          firebaseName: program.firebase,
           server: program.server,
           npm: program.npm,
           node: program.node,
           grunt: program.grunt,
-          token: program.token,
+          firebaseToken: program.firebaseToken,
           email: program.email,
           toFile: null  // use the default
         });
@@ -253,12 +255,12 @@ module.exports = function (argv) {
           toFile = toFile[0]
 
         require('./lib/preset-build.js')(true, {
-          firebase: program.firebase,
+          firebaseName: program.firebase,
           server: program.server,
           npm: program.npm,
           node: program.node,
           grunt: program.grunt,
-          token: program.token,
+          firebaseToken: program.firebaseToken,
           email: program.email,
           toFile: toFile
         });
@@ -271,12 +273,12 @@ module.exports = function (argv) {
           fromFile = fromFile[0]
 
         require('./lib/restore.js')(true, {
-          firebase: program.firebase,
+          firebaseName: program.firebase,
           server: program.server,
           npm: program.npm,
           node: program.node,
           grunt: program.grunt,
-          token: program.token,
+          firebaseToken: program.firebaseToken,
           email: program.email,
           fromFile: fromFile
         });
@@ -286,7 +288,7 @@ module.exports = function (argv) {
       .description('Updates a webhook site with the latest generate code')
       .action(function () {
         require('./lib/update.js')({
-          firebase: program.firebase,
+          firebaseName: program.firebase,
           server: program.server,
           embedly: program.embedly,
           imgix_host: program.imgix_host,
@@ -294,7 +296,7 @@ module.exports = function (argv) {
           npm: program.npm,
           node: program.node,
           grunt: program.grunt,
-          token: program.token,
+          firebaseToken: program.firebaseToken,
           email: program.email,
           force: program.force,
           cache: program.cache
@@ -305,12 +307,12 @@ module.exports = function (argv) {
       .description('Push webhook directory to server')
       .action(function () {
         require('./lib/push.js')({
-          firebase: program.firebase,
+          firebaseName: program.firebase,
           server: program.server,
           npm: program.npm,
           node: program.node,
           grunt: program.grunt,
-          token: program.token,
+          firebaseToken: program.firebaseToken,
           email: program.email
         });
       });
@@ -319,12 +321,12 @@ module.exports = function (argv) {
       .description('Push webhook directory to server')
       .action(function () {
         require('./lib/push.js')({
-          firebase: program.firebase,
+          firebaseName: program.firebase,
           server: program.server,
           npm: program.npm,
           node: program.node,
           grunt: program.grunt,
-          token: program.token,
+          firebaseToken: program.firebaseToken,
           email: program.email,
           skipBuild: program.skipBuild,
         });
@@ -345,7 +347,7 @@ module.exports = function (argv) {
       .action(function () {
         require('./lib/reset-keys')({
           firebaseName: program.firebase,
-          firebaseToken: program.token,
+          firebasefirebaseToken: program.firebaseToken,
         })
       })
 
@@ -354,7 +356,7 @@ module.exports = function (argv) {
       .action(function () {
         require('./lib/reset-keys')({
           firebaseName: program.firebase,
-          firebaseToken: program.token,
+          firebasefirebaseToken: program.firebaseToken,
           resetUserPasswords: false,
         })
       })
@@ -364,7 +366,7 @@ module.exports = function (argv) {
       .action(function () {
         require('./lib/reset-keys')({
           firebaseName: program.firebase,
-          firebaseToken: program.token,
+          firebasefirebaseToken: program.firebaseToken,
           resetSiteKeys: false,
         })
       })
@@ -374,12 +376,12 @@ module.exports = function (argv) {
       .action(function (port) {
         require('./lib/serve.js')({
           port: port || null,
-          firebase: program.firebase,
+          firebaseName: program.firebase,
           server: program.server,
           npm: program.npm,
           node: program.node,
           grunt: program.grunt,
-          token: program.token,
+          firebaseToken: program.firebaseToken,
           email: program.email,
           cache: program.cache,
           skipBuild: program.skipBuild,
@@ -396,7 +398,7 @@ module.exports = function (argv) {
 
         require('./lib/clone-content-under.js')({
           firebaseName: program.firebase,
-          firebaseToken: program.token,
+          firebasefirebaseToken: program.firebaseToken,
           namespace: namespace,
           contentTypes: contentTypes,
         });
@@ -441,7 +443,7 @@ module.exports = function (argv) {
         console.log(program.npm);
         console.log(program.node);
         console.log(program.grunt);
-        console.log(program.token);
+        console.log(program.firebaseToken);
         console.log(program.email);
       });
 
