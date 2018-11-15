@@ -6,7 +6,7 @@ var program = require('commander');
 var version = 'v24';
 
 module.exports = function (argv) {
-  
+
   program.version(require('./package.json').version)
     .option('-f, --firebase [firebaseName]', 'Use the specified firebase instead of webhook main, for self hosting mode')
     .option('-t, --firebaseToken [firebaseToken]', 'Use this auth token for firebase instead of prompting for login')
@@ -270,7 +270,7 @@ module.exports = function (argv) {
         node: program.node,
         grunt: program.grunt,
         email: program.email,
-        toFile: toFile
+        toFile: toFile || 'backup.json',
       });
     });
 
