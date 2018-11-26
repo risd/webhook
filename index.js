@@ -3,11 +3,11 @@
 require('colors');
 var program = require('commander');
 
-var version = 'v24';
+var version = require('./package.json').version;
 
 module.exports = function (argv) {
 
-  program.version(require('./package.json').version)
+  program.version(version)
     .option('-f, --firebase [firebaseName]', 'Use the specified firebase instead of webhook main, for self hosting mode')
     .option('-t, --firebaseToken [firebaseToken]', 'Use this auth token for firebase instead of prompting for login')
     .option('-s, --server [uploadserver]', 'Use this server when uploading files, for self hosting mode')
