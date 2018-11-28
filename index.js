@@ -356,38 +356,6 @@ module.exports = function (argv) {
       })
     })
 
-  program.command('reset-keys')
-    .description('Resets user passwords and site keys.')
-    .action(function () {
-      require('./lib/reset-keys')({
-        firebaseName: program.firebase,
-        firebaseToken: program.firebaseToken,
-        firebaseAPIKey: program.firebaseAPIKey,
-      })
-    })
-
-  program.command('reset-keys:sites')
-    .description('Resets site keys.')
-    .action(function () {
-      require('./lib/reset-keys')({
-        firebaseName: program.firebase,
-        firebasefirebaseToken: program.firebaseToken,
-        firebaseAPIKey: program.firebaseAPIKey,
-        resetUserPasswords: false,
-      })
-    })
-
-   program.command('reset-keys:users')
-    .description('Resets site keys.')
-    .action(function () {
-      require('./lib/reset-keys')({
-        firebaseName: program.firebase,
-        firebasefirebaseToken: program.firebaseToken,
-        firebaseAPIKey: program.firebaseAPIKey,
-        resetSiteKeys: false,
-      })
-    })
-
   program.command('serve [port]')
     .description('Serves a webhook site locally')
     .action(function (port) {
@@ -486,7 +454,6 @@ module.exports.lib = {
   push: require( './lib/push.js' ),
   deploys: require( './lib/deploys.js' ),
   mapDomain: require( './lib/map-domain.js' ),
-  resetKeys: require( './lib/reset-keys/index.js' ),
   listSites: require( './lib/list-sites.js' ),
   presetBuild: require( './lib/preset-build.js' ),
   restore: require( './lib/restore.js' ),
