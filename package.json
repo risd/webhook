@@ -1,6 +1,6 @@
 {
   "name": "@risd/wh",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Static site generator tooling for interating with a webhook publishing platform instance.",
   "keywords": [
     "webhook",
@@ -32,6 +32,7 @@
     "async": "~0.2.9",
     "colors": "~0.6.2",
     "commander": "~2.1.0",
+    "debug": "^4.1.0",
     "firebase": "^5.5.9",
     "gcloud-site-dir": "^1.1.1",
     "git-state": "^4.0.0",
