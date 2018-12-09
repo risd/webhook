@@ -30,6 +30,7 @@ module.exports = function (argv) {
     .option('--branch [branch]', 'Git branch to use, instead of the current branch.')
     .option('--firebaseAPIKey [firebaseAPIKey]', 'The Firebase web API key to use.')
     .option('--platformName [platformName]', 'The name of the webhook publishing platform instance.')
+    .option('--force [force]', 'Skip any interactive prompts to confirm command execution.')
 
   program.command('create <siteName>')
     .description('Create a new webhook site')
@@ -135,6 +136,77 @@ module.exports = function (argv) {
         cache: program.cache
       });
     });
+
+  program.command('github')
+    .description('Display the current git user/repo configuration for the site.')
+    .action(function () {
+      require('./lib/github.js')({
+        firebaseName: program.firebase,
+        firebaseToken: program.firebaseToken,
+        firebaseAPIKey: program.firebaseAPIKey,
+      })
+    })
+
+  program.command('github:set <userRepo>')
+    .description('Set the git user/repo configuration for the current site directory.')
+    .action(function (userRepo) {
+      if (typeof userRepo !== 'string') console.log('Set requires a user/repo name be passed in. For example: google/leveldb')
+
+      require('./lib/github.js')({
+        firebaseName: program.firebase,
+        firebaseToken: program.firebaseToken,
+        firebaseAPIKey: program.firebaseAPIKey,
+        gitSet: userRepo,
+      })
+    })
+
+  program.command('github:remove')
+    .description('Remove the git user/repo configuration for the current site directory.')
+    .action(function () {
+      require('./lib/github.js')({
+        firebaseName: program.firebase,
+        firebaseToken: program.firebaseToken,
+        firebaseAPIKey: program.firebaseAPIKey,
+        gitRemove: true,
+      })
+    })
+
+  program.command('deploys')
+    .description('List all deploy configuration for the current webhook site')
+    .action(function () {
+      require('./lib/deploys.js')({
+        firebaseName: program.firebase,
+        firebaseToken: program.firebaseToken,
+        firebaseAPIKey: program.firebaseAPIKey,
+      })
+    })
+
+  program.command('deploys:set <bucketName>')
+    .description('Set a bucket as the deploy destination. Use the --branch flag to override setting the deploy to use the current branch\'s set of templates.')
+    .action(function (bucketName) {
+      if (typeof bucketName !== 'string') console.log('Set requires a bucket name be passed in.')
+
+      require('./lib/deploys.js')({
+        firebaseName: program.firebase,
+        firebaseToken: program.firebaseToken,
+        firebaseAPIKey: program.firebaseAPIKey,
+        bucketSet: bucketName,
+      })
+    })
+
+  program.command('deploys:remove <bucketName>')
+    .description('Remove a bucket as a deploy destination.')
+    .action(function (bucketName) {
+      if ( typeof bucketName !== 'string' ) console.log( 'Set requires a bucket name be passed in.' )
+
+      require('./lib/deploys.js')({
+        firebaseName: program.firebase,
+        firebaseToken: program.firebaseToken,
+        firebaseAPIKey: program.firebaseAPIKey,
+        bucketRemove: bucketName,
+      })
+    })
+
 
   program.command('conf <siteName>')
     .description('Initializes a site with configuration files. Assumes node_modules are already installed.')
@@ -453,6 +525,7 @@ module.exports.lib = {
   delete: require('./lib/delete.js'),
   push: require( './lib/push.js' ),
   deploys: require( './lib/deploys.js' ),
+  github: require( './lib/github.js' ),
   mapDomain: require( './lib/map-domain.js' ),
   listSites: require( './lib/list-sites.js' ),
   presetBuild: require( './lib/preset-build.js' ),
