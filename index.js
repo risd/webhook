@@ -30,6 +30,7 @@ module.exports = function (argv) {
     .option('--branch [branch]', 'Git branch to use, instead of the current branch.')
     .option('--firebaseAPIKey [firebaseAPIKey]', 'The Firebase web API key to use.')
     .option('--platformName [platformName]', 'The name of the webhook publishing platform instance.')
+    .option('--force [force]', 'Skip any interactive prompts to confirm command execution.')
 
   program.command('create <siteName>')
     .description('Create a new webhook site')
