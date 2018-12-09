@@ -137,6 +137,43 @@ module.exports = function (argv) {
       });
     });
 
+  program.command('deploys')
+    .description('List all deploy configuration for the current webhook site')
+    .action(function () {
+      require('./lib/deploys.js')({
+        firebaseName: program.firebase,
+        firebaseToken: program.firebaseToken,
+        firebaseAPIKey: program.firebaseAPIKey,
+      })
+    })
+
+  program.command('deploys:set <bucketName>')
+    .description('Set a bucket as the deploy destination. Use the --branch flag to override setting the deploy to use the current branch\'s set of templates.')
+    .action(function (bucketName) {
+      if ( typeof bucketName !== 'string' ) console.log( 'Set requires a bucket name be passed in.' )
+
+      require('./lib/deploys.js')({
+        firebaseName: program.firebase,
+        firebaseToken: program.firebaseToken,
+        firebaseAPIKey: program.firebaseAPIKey,
+        bucketSet: bucketName,
+      })
+    })
+
+  program.command('deploys:remove <bucketName>')
+    .description('Remove a bucket as a deploy destination.')
+    .action(function (bucketName) {
+      if ( typeof bucketName !== 'string' ) console.log( 'Set requires a bucket name be passed in.' )
+
+      require('./lib/deploys.js')({
+        firebaseName: program.firebase,
+        firebaseToken: program.firebaseToken,
+        firebaseAPIKey: program.firebaseAPIKey,
+        bucketRemove: bucketName,
+      })
+    })
+
+
   program.command('conf <siteName>')
     .description('Initializes a site with configuration files. Assumes node_modules are already installed.')
     .action(function (siteName) {
