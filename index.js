@@ -352,7 +352,7 @@ module.exports = function (argv) {
       if ( Array.isArray( fromFile ) )
         fromFile = fromFile[0]
 
-      require('./lib/restore.js')(true, {
+      require('./lib/restore.js')({
         firebaseName: program.firebase,
         firebaseToken: program.firebaseToken,
         firebaseAPIKey: program.firebaseAPIKey,
