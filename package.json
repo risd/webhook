@@ -1,6 +1,6 @@
 {
   "name": "@risd/wh",
-  "version": "2.0.11",
+  "version": "2.0.12",
   "description": "Static site generator tooling for interating with a webhook publishing platform instance.",
   "keywords": [
     "webhook",
