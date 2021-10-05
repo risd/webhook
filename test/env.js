@@ -18,7 +18,10 @@ module.exports = function env () {
       server: process.env.WEBHOOK_SERVER,
       siteName: process.env.WEBHOOK_SITENAME,
       siteKey: process.env.WEBHOOK_SITEKEY,
-    }
+    },
+    cdnPurge: {
+      url: process.env.PURGE_URL,
+    },
   }
 
 }
