@@ -22,6 +22,9 @@ module.exports = function env () {
     cdnPurge: {
       url: process.env.PURGE_URL,
     },
+    downloadGenerate: {
+      generate: process.env.GENERATE,
+    },
   }
 
 }
