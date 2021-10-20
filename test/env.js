@@ -6,8 +6,10 @@ module.exports = function env () {
   } )
 
   return {
-    firebase: {
-      name: process.env.FIREBASE_NAME
+    firebaseInterface: {
+      firebaseName: process.env.FIREBASE_NAME,
+      firebaseAPIKey: process.env.FIREBASE_API_KEY,
+      firebaseServiceAccountKey: process.env.FIREBASE_SERVICE_ACCOUNT_KEY,
     },
     webhook: {
       username: process.env.WEBHOOK_USERNAME,
@@ -24,6 +26,10 @@ module.exports = function env () {
     },
     downloadGenerate: {
       generate: process.env.GENERATE,
+    },
+    siteNameKey: {
+      siteName: process.env.WEBHOOK_SITENAME,
+      siteKey: process.env.WEBHOOK_SITEKEY,
     },
   }
 
