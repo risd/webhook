@@ -4,6 +4,12 @@ const env = require( './env.js' )()
 
 const firebaseInterface = FirebaseInterface( env.firebaseInterface )
 
+test.onFinish( function () {
+  // FirebaseInterface will hang the process indefinitely, so we
+  // have to manually close it out.
+  process.exit()
+} )
+
 test( 'database', function ( t ) {
   t.plan( 1 )
 
@@ -53,14 +59,12 @@ test( 'site-data:get-set', function ( t ) {
     .catch( function ( error ) {
       console.log( error )
       t.notOk( error, 'failed to get site data for name and key' )
-      throw new Error( 'must get data to be able to set it' )
+      t.end( new Error( 'must get data to be able to set it' ) )
     } )
 
   function setData ( data ) {
     firebaseInterface.siteData( env.siteNameKey, data )
       .then( function ( result ) {
-        console.log( 'result' )
-        console.log( result )
         t.ok( true, 'set data successfully' )
       } )
       .catch( function ( error ) {
@@ -78,8 +82,6 @@ test( 'site-data:get-set', function ( t ) {
 
     firebaseInterface.siteData( options, data )
       .then( function ( result ) {
-        console.log( 'result' )
-        console.log( result )
         t.ok( true, 'set data successfully via forced rest' )
       } )
       .catch( function ( error ) {
@@ -87,5 +89,3 @@ test( 'site-data:get-set', function ( t ) {
       } )
   }
 } )
-
-

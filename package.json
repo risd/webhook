@@ -39,7 +39,6 @@
     "gcloud-site-dir": "^2.0.3",
     "git-state": "^4.0.0",
     "github": "~0.1.12",
-    "googleapis": "^35.0.0",
     "inquirer": "~0.5.1",
     "lodash": "~2.4.1",
     "mime": "~1.2.11",

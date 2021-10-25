@@ -8,7 +8,6 @@ test( 'download-generate:success', function ( t ) {
   downloadGenerate( env.downloadGenerate.generate, handleDownload )
 
   function handleDownload ( error, fileName ) {
-    console.log( fileName )
     t.notOk( error, 'finish without error' )
     t.ok( typeof fileName === 'string', 'finish with generate file name' )
 
