@@ -47,7 +47,9 @@ test( 'login:successfully', function ( t ) {
 } )
 
 test( 'site-data:get-set', function ( t ) {
-  t.plan( 3 )
+  t.plan( 5 )
+
+  const setTimeStamp = new Date().toString()
 
   // get site data
   firebaseInterface.siteData( env.siteNameKey )
@@ -57,12 +59,13 @@ test( 'site-data:get-set', function ( t ) {
       setData( data )
     } )
     .catch( function ( error ) {
-      console.log( error )
       t.notOk( error, 'failed to get site data for name and key' )
       t.end( new Error( 'must get data to be able to set it' ) )
     } )
 
   function setData ( data ) {
+    data._webhook_test_suite_set_data_sdk = setTimeStamp
+
     firebaseInterface.siteData( env.siteNameKey, data )
       .then( function ( result ) {
         t.ok( true, 'set data successfully' )
@@ -76,6 +79,8 @@ test( 'site-data:get-set', function ( t ) {
   }
 
   function setDataForceREST ( data ) {
+    data._webhook_test_suite_set_data_rest = setTimeStamp
+
     var options = Object.assign( {
       forceREST: true,
     }, env.siteNameKey )
@@ -86,6 +91,22 @@ test( 'site-data:get-set', function ( t ) {
       } )
       .catch( function ( error ) {
         t.notOk( error, 'set data failed via forced rest' )
+      } )
+      .finally( function () {
+        verifySet()
+      } )
+  }
+
+  function verifySet () {
+    firebaseInterface.siteData( env.siteNameKey )
+      .then( function ( snapshot ) {
+        var data = snapshot.val()
+        t.ok( data._webhook_test_suite_set_data_sdk === setTimeStamp, 'verified set via sdk' )
+        t.ok( data._webhook_test_suite_set_data_rest === setTimeStamp, 'verified set via rest' )
+      } )
+      .catch( function ( error ) {
+        t.notOk( error, 'failed to get site data for name and key to verify set methods' )
+        t.end( new Error( 'must get data to be able to set it' ) )
       } )
   }
 } )
