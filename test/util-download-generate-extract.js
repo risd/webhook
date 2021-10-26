@@ -1,21 +1,23 @@
 const test = require( 'tape' )
 const downloadGenerate = require( '../lib/util/download-generate.js' )
+const generateExtract = require( '../lib/util/generate-extract.js' )
 const env = require( './env.js' )()
 
+const generatePath = require( 'path' )
+  .join( process.cwd(), '.generate-repo.tgz' )
+
+test.onFinish( function () {
+  require( 'fs' ).unlinkSync( generatePath )
+} )
+
 test( 'download-generate:success', function ( t ) {
-  t.plan( 3 )
+  t.plan( 2 )
 
   downloadGenerate( env.downloadGenerate.generate, handleDownload )
 
   function handleDownload ( error, fileName ) {
     t.notOk( error, 'finish without error' )
     t.ok( typeof fileName === 'string', 'finish with generate file name' )
-
-    require( 'fs' ).unlinkSync(
-      require( 'path' )
-        .join( process.cwd(), '.generate-repo.tgz' ) )
-
-    t.ok( true, 'removed generate file' )
   }
 } )
 
@@ -27,4 +29,18 @@ test( 'download-generate:failure', function ( t ) {
   function handleDownload ( error ) {
     t.ok( error, 'finishes with error' )
   }
+} )
+
+test( 'generate-extract', function ( t ) {
+  t.plan( 1 )
+
+  generateExtract( {
+    generatePath,
+  } )
+    .on( 'error', function ( error ) {
+      t.notOk( error, 'could not extract generate' )
+    } )
+    .on( 'finish', function () {
+      t.ok( true, 'finished extracting generate' )
+    } ) 
 } )
