@@ -35,6 +35,9 @@ module.exports = function env () {
       keyFile: process.env.FIREBASE_SERVICE_ACCOUNT_KEY,
       siteName: process.env.WEBHOOK_SITENAME,
     },
+    utilPackageUpdate: {
+      platformName: process.env.PLATFORM_NAME,
+    },
   }
 
 }
