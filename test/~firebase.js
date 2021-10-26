@@ -1,3 +1,5 @@
+/* run this test last since it needs to process.exit on finish */
+
 const test = require( 'tape' )
 const FirebaseInterface = require( '../lib/util/firebase/index.js' )
 const env = require( './env.js' )()

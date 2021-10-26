@@ -43,7 +43,7 @@
     "lodash": "~2.4.1",
     "mime": "~1.2.11",
     "node-uuid": "^1.4.7",
-    "tar": "^4.4.8",
+    "tar": "^6.1.11",
     "webhook-deploy-configuration": "^3.0.0",
     "win-spawn": "~2.0.0",
     "wrench": "~1.5.4"
