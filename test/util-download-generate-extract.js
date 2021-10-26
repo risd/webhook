@@ -3,8 +3,9 @@ const downloadGenerate = require( '../lib/util/download-generate.js' )
 const generateExtract = require( '../lib/util/generate-extract.js' )
 const env = require( './env.js' )()
 
-const generatePath = require( 'path' )
-  .join( process.cwd(), '.generate-repo.tgz' )
+const path = require( 'path' )
+const extractToPath = path.join( process.cwd(), 'package' )
+const generatePath = path.join( process.cwd(), '.generate-repo.tgz' )
 
 test.onFinish( function () {
   require( 'fs' ).unlinkSync( generatePath )
@@ -36,6 +37,7 @@ test( 'generate-extract', function ( t ) {
 
   generateExtract( {
     generatePath,
+    cwd: extractToPath,
   } )
     .on( 'error', function ( error ) {
       t.notOk( error, 'could not extract generate' )
