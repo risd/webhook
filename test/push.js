@@ -9,7 +9,7 @@ test( 'push-without-error', function ( t ) {
     branch: 'webhook-test',
     skipBuild: 'true',
     http: false,
-    dirName: './test/assets',
+    dirName: './test/fake-site',
   } )
 
   push( pushOptions, function onPush ( error ) {
