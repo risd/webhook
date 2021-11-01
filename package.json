@@ -39,7 +39,7 @@
     "git-state": "^4.0.0",
     "github": "~0.1.12",
     "inquirer": "~0.5.1",
-    "mime": "~1.2.11",
+    "mime": "^2.5.2",
     "node-uuid": "^1.4.7",
     "tar": "^6.1.11",
     "webhook-deploy-configuration": "^3.0.0",
