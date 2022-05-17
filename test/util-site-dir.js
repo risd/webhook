@@ -5,7 +5,7 @@ const env = require( './env.js' )()
 
 env.utilSiteDir.siteName = unescapeSite( env.utilSiteDir.siteName )
 
-test( 'push-without-error', function ( t ) {
+test( 'push-without-error-util', function ( t ) {
   t.plan( 1 )
 
   const pushOptions = Object.assign( {}, env.utilSiteDir, {

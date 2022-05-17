@@ -2,7 +2,7 @@ const test = require( 'tape' )
 const push = require( '../lib/push.js' )
 const env = require( './env.js' )()
 
-test( 'push-without-error', function ( t ) {
+test( 'push-without-error-module', function ( t ) {
   t.plan( 1 )
 
   const pushOptions = Object.assign( {}, env.push, {
