@@ -9,7 +9,6 @@ module.exports = function env () {
     firebaseInterface: {
       firebaseName: process.env.FIREBASE_NAME,
       firebaseAPIKey: process.env.FIREBASE_API_KEY,
-      firebaseServiceAccountKey: process.env.FIREBASE_SERVICE_ACCOUNT_KEY,
     },
     webhook: {
       username: process.env.WEBHOOK_USERNAME,
