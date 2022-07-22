@@ -52,18 +52,20 @@ test( 'site-data:get-set', function ( t ) {
   t.plan( 5 )
 
   const setTimeStamp = new Date().toString()
-
+  let data
   // get site data
   firebaseInterface.siteData( env.siteNameKey )
     .then( function ( snapshot ) {
-      var data = snapshot.val()
+      data = snapshot.val()
       t.ok( typeof data === 'object', 'got data object for site name and key')
-      setData( data )
     } )
     .catch( function ( error ) {
       t.notOk( error, 'failed to get site data for name and key' )
       t.end( new Error( 'must get data to be able to set it' ) )
     } )
+    .finally(function () {
+      setData( data )
+    })
 
   function setData ( data ) {
     data._webhook_test_suite_set_data_sdk = setTimeStamp

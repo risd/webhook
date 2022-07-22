@@ -33,7 +33,7 @@
     "colors": "~0.6.2",
     "commander": "~2.1.0",
     "debug": "^4.1.0",
-    "firebase": "^8.10.1",
+    "firebase": "^9.9.0",
     "form-data": "^4.0.0",
     "gcloud-site-dir": "^2.0.3",
     "git-state": "^4.0.0",
@@ -42,7 +42,7 @@
     "mime": "^2.5.2",
     "node-uuid": "^1.4.7",
     "tar": "^6.1.11",
-    "webhook-deploy-configuration": "^3.0.0",
+    "webhook-deploy-configuration": "^3.0.1",
     "win-spawn": "~2.0.0",
     "wrench": "~1.5.4"
   },
