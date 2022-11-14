@@ -208,7 +208,7 @@ module.exports = function (argv) {
 
   program.command('conf <siteName>')
     .description('Initializes a site with configuration files. Assumes node_modules are already installed.')
-    .action(function (siteName) {
+    .action(async function (siteName) {
       if ( Array.isArray( siteName ) )
         siteName = siteName[0]
 
@@ -224,22 +224,42 @@ module.exports = function (argv) {
         siteName = siteName.replace(/\./g, ',1');
       }
       
-      require('./lib/conf.js')({
-        siteName: siteName,
-        firebaseName: program.firebase,
-        firebaseToken: program.firebaseToken,
-        firebaseAPIKey: program.firebaseAPIKey,
-        server: program.server,
-        embedly: program.embedly,
-        generate: program.generate,
-        imgix_host: program.imgix_host,
-        imgix_secret: program.imgix_secret,
-        npm: program.npm,
-        node: program.node,
-        grunt: program.grunt,
-        email: program.email,
-        cache: program.cache
-      });
+      try {
+        await require('./lib/conf.js')({
+          siteName: siteName,
+          firebaseName: program.firebase,
+          firebaseToken: program.firebaseToken,
+          firebaseAPIKey: program.firebaseAPIKey,
+          server: program.server,
+          embedly: program.embedly,
+          generate: program.generate,
+          imgix_host: program.imgix_host,
+          imgix_secret: program.imgix_secret,
+          npm: program.npm,
+          node: program.node,
+          grunt: program.grunt,
+          email: program.email,
+          cache: program.cache
+        })
+        console.log('Done preparing files.'.green);
+      }
+      catch (error) {
+        switch(error.code) {
+          case errors.ERROR_FIREBASE_AUTH_WRONG_PASSWORD:
+            console.log('========================================================'.red);
+            console.log('# Password is incorrect                                #'.red);
+            console.log('========================================================'.red);
+            console.log('# Please doublecheck your records.'.red);
+            console.log(`# You can change your by attempting to log into any ${ program.platformName } CMS`.yellow);
+            console.log('# ---------------------------------------------------- #'.red);
+            break;
+          case errors.ERROR_FIREBASE_AUTH_USER_NOT_FOUND:
+            console.log(`User not found. Please create a new account running the 'init' or 'create' command with this CLI. Otherwise create an accont on any ${ program.platformName } CMS.`)
+            break;
+          default:
+            console.log('Error setting up .firebase.conf')
+        }
+      }
     });
 
   program.command('list-sites')
@@ -366,7 +386,7 @@ module.exports = function (argv) {
         console.log('========================================================'.blue);
       }
       catch (error) {
-        switch (error.message) {
+        switch (error.code) {
           case errors.ERROR_IN_SITE_BUILD:
             console.log('========================================================'.red);
             console.log('# Deploy halted. Templates not pushed.'.red);
