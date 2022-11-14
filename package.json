@@ -38,6 +38,7 @@
     "gcloud-site-dir": "^3.0.0",
     "git-state": "^4.0.0",
     "github": "~0.1.12",
+    "glob": "^7.1.7",
     "inquirer": "^8.2.0",
     "mime": "^2.5.2",
     "node-uuid": "^1.4.7",
