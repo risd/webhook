@@ -1,7 +1,8 @@
 require('colors')
 const program = require('commander')
 const errors = require('./lib/errors.js')
-const version = require('./package.json').version;
+const version = require('./package.json').version
+const printIntro = require('./lib/util/print-intro')
 
 module.exports = function (argv) {
 
@@ -49,23 +50,50 @@ module.exports = function (argv) {
         siteName = siteName.replace(/\./g, ',1');
       }
 
-      require('./lib/create.js')({
-        siteName: siteName,
-        firebaseName: program.firebase,
-        firebaseToken: program.firebaseToken,
-        firebaseAPIKey: program.firebaseAPIKey,
-        embedly: program.embedly,
-        server: program.server,
-        generate: program.generate,
-        imgix_host: program.imgix_host,
-        imgix_secret: program.imgix_secret,
-        npm: program.npm,
-        node: program.node,
-        grunt: program.grunt,
-        email: program.email,
-        force: program.force,
-        cache: program.cache
-      });
+      printIntro(program.platformName)
+
+      try {
+        await require('./lib/create.js')({
+          siteName: siteName,
+          firebaseName: program.firebase,
+          firebaseToken: program.firebaseToken,
+          firebaseAPIKey: program.firebaseAPIKey,
+          embedly: program.embedly,
+          server: program.server,
+          generate: program.generate,
+          imgix_host: program.imgix_host,
+          imgix_secret: program.imgix_secret,
+          npm: program.npm,
+          node: program.node,
+          grunt: program.grunt,
+          email: program.email,
+          force: program.force,
+          cache: program.cache
+        });
+      }
+      catch (error) {
+        switch (error.code) {
+          case errors.ERROR_MISMATCHING_PASSWPRDS:
+            console.log('========================================================'.red);
+            console.log('# Your passwords didn\'t match                         #'.red);
+            console.log('========================================================'.red);
+            console.log('# Happens to everyone. Why don\'t you give it another try.'.red);
+            console.log('# ---------------------------------------------------- #'.red);
+            break
+          case errors.ERROR_CREATE_INVALID_SITE_NAME:
+            console.log('Invalid sitename. Can only contain letters, numbers, and dashes.'.red)
+            break
+          case errors.ERROR_FIREBASE_AUTH_WEAK_PASSWORD:
+            console.log('========================================================'.red)
+            console.log('# Your password is too weak.                           #'.red)
+            console.log('========================================================'.red)
+            console.log('# Try again with a strong password.                    #'.red)
+            console.log('# ---------------------------------------------------- #'.red)
+            break;
+          default
+            console.log(error)
+        }
+      }
     });
 
   program.command('delete <siteName>')
@@ -396,7 +424,7 @@ module.exports = function (argv) {
             console.log('# templates before trying to deploy again.'.red);
             console.log('# ---------------------------------------------------- #'.red)
             break;
-          case errors.ERROR_IN_SITE_UPLOAD:
+          case errors.ERROR_PUSH_SITE_UPLOAD:
             console.log('========================================================'.red);
             console.log('# Deploy upload failed. Templates not pushed.'.red);
             console.log('========================================================'.red);
