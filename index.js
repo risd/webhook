@@ -193,11 +193,17 @@ module.exports = function (argv) {
   program.command('github')
     .description('Display the current git user/repo configuration for the site.')
     .action(function () {
-      require('./lib/github.js')({
-        firebaseName: program.firebase,
-        firebaseToken: program.firebaseToken,
-        firebaseAPIKey: program.firebaseAPIKey,
-      })
+      try {
+        const { siteName, github } = await require('./lib/github.js')({
+          firebaseName: program.firebase,
+          firebaseToken: program.firebaseToken,
+          firebaseAPIKey: program.firebaseAPIKey,
+        })
+        console.log(`${ siteName } stored on github as ${ github }`)
+      }
+      catch (error) {
+        console.log(error)
+      }
     })
 
   program.command('github:set <userRepo>')
@@ -205,23 +211,32 @@ module.exports = function (argv) {
     .action(function (userRepo) {
       if (typeof userRepo !== 'string') console.log('Set requires a user/repo name be passed in. For example: google/leveldb')
 
-      require('./lib/github.js')({
-        firebaseName: program.firebase,
-        firebaseToken: program.firebaseToken,
-        firebaseAPIKey: program.firebaseAPIKey,
-        gitSet: userRepo,
-      })
+      try {
+        const { siteName, github } = await require('./lib/github.js')({
+          firebaseName: program.firebase,
+          firebaseToken: program.firebaseToken,
+          firebaseAPIKey: program.firebaseAPIKey,
+          gitSet: userRepo,
+        })
+        console.log( `Successfully set github user/repo configuration for ${ siteName } as: ${ github }` )
+      }
+      catch (error) {
+        console.log(error)
+      }
     })
 
   program.command('github:remove')
     .description('Remove the git user/repo configuration for the current site directory.')
     .action(function () {
-      require('./lib/github.js')({
-        firebaseName: program.firebase,
-        firebaseToken: program.firebaseToken,
-        firebaseAPIKey: program.firebaseAPIKey,
-        gitRemove: true,
-      })
+      try {
+        const { siteName } = await require('./lib/github.js')({
+          firebaseName: program.firebase,
+          firebaseToken: program.firebaseToken,
+          firebaseAPIKey: program.firebaseAPIKey,
+          gitRemove: true,
+        })
+        console.log(`Removed github user/repo configure for ${ siteName }`)
+      }
     })
 
   program.command('deploys')
