@@ -16,4 +16,5 @@ node_modules
 
 .testenv
 
+.wh-generate
 test/wh-automated-test*
