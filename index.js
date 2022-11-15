@@ -34,7 +34,7 @@ module.exports = function (argv) {
 
   program.command('create <siteName>')
     .description('Create a new webhook site')
-    .action(function (siteName) {
+    .action(async function (siteName) {
       if ( Array.isArray( siteName ) )
         siteName = siteName[0]
 
@@ -119,7 +119,7 @@ module.exports = function (argv) {
 
   program.command('delete <siteName>')
     .description('Delete a site from webhook')
-    .action(function (siteName) {
+    .action(async function (siteName) {
       if ( Array.isArray( siteName ) )
         siteName = siteName[0]
 
@@ -135,22 +135,27 @@ module.exports = function (argv) {
         siteName = siteName.replace(/\./g, ',1');
       }
 
-      require('./lib/delete.js')({
-        siteName: siteName,
-        firebaseName: program.firebase,
-        firebaseToken: program.firebaseToken,
-        firebaseAPIKey: program.firebaseAPIKey,
-        npm: program.npm,
-        node: program.node,
-        grunt: program.grunt,
-        email: program.email,
-        force: program.force
-      });
+      try {
+        await require('./lib/delete.js')({
+          siteName: siteName,
+          firebaseName: program.firebase,
+          firebaseToken: program.firebaseToken,
+          firebaseAPIKey: program.firebaseAPIKey,
+          npm: program.npm,
+          node: program.node,
+          grunt: program.grunt,
+          email: program.email,
+          force: program.force
+        })
+      }
+      catch (error) {
+        console.log(error)
+      }
     });
 
   program.command('init <siteName>')
     .description('Initializes a site with configuration files')
-    .action(function (siteName) {
+    .action(async function (siteName) {
       if ( Array.isArray( siteName ) )
         siteName = siteName[0]
 
@@ -192,7 +197,7 @@ module.exports = function (argv) {
 
   program.command('github')
     .description('Display the current git user/repo configuration for the site.')
-    .action(function () {
+    .action(async function () {
       try {
         const { siteName, github } = await require('./lib/github.js')({
           firebaseName: program.firebase,
@@ -208,7 +213,7 @@ module.exports = function (argv) {
 
   program.command('github:set <userRepo>')
     .description('Set the git user/repo configuration for the current site directory.')
-    .action(function (userRepo) {
+    .action(async function (userRepo) {
       if (typeof userRepo !== 'string') console.log('Set requires a user/repo name be passed in. For example: google/leveldb')
 
       try {
@@ -227,7 +232,7 @@ module.exports = function (argv) {
 
   program.command('github:remove')
     .description('Remove the git user/repo configuration for the current site directory.')
-    .action(function () {
+    .action(async function () {
       try {
         const { siteName } = await require('./lib/github.js')({
           firebaseName: program.firebase,
