@@ -1,3 +1,4 @@
+process.env.DEBUG = '*'
 require('colors')
 const program = require('commander')
 const errors = require('./lib/errors.js')
@@ -70,6 +71,12 @@ module.exports = function (argv) {
           force: program.force,
           cache: program.cache
         });
+        console.log('\n========================================================'.blue);
+        console.log(  '# We just created a new site on your computer.         #'.blue);
+        console.log(  '========================================================'.blue);
+        console.log(  '#'.blue + ' Next steps:' + '                                          #'.blue)
+        console.log(  '$ cd '.cyan + siteName.cyan )
+        console.log(  '$ npm start'.cyan )
       }
       catch (error) {
         switch (error.code) {
@@ -89,7 +96,21 @@ module.exports = function (argv) {
             console.log('========================================================'.red)
             console.log('# Try again with a strong password.                    #'.red)
             console.log('# ---------------------------------------------------- #'.red)
-            break;
+            break
+          case errors.ERROR_CREATE_SITE_NAME_ALREADY_TAKEN:
+            console.log(`
+              ========================================================
+              # The site ${ siteName } is already taken              #
+              ========================================================
+              # This name has already been taken by another user.    #
+              # Please try a different one. Or try initializing the
+              # existing site using its code base.
+              # ---------------------------------------------------- #`.red)
+            break
+          case errors.ERROR_CREATE_DOWNLOAD_GENERATE:
+            console.log('Could not download generator from npm.'.red)
+            console.log(error)
+            break
           default
             console.log(error)
         }

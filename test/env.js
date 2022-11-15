@@ -20,6 +20,12 @@ module.exports = function env () {
       siteName: process.env.WEBHOOK_SITENAME,
       siteKey: process.env.WEBHOOK_SITEKEY,
     },
+    create: {
+      platformName: process.env.PLATFORM_NAME
+      generate: process.env.GENERATE,
+      firebaseName: process.env.FIREBASE_NAME,
+      firebaseAPIKey: process.env.FIREBASE_API_KEY,
+    }
     cdnPurge: {
       url: process.env.PURGE_URL,
     },

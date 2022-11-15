@@ -1,13 +1,16 @@
 const test = require( 'tape' )
+const path = require('path')
 const create = require( '../lib/create.js' )
 const env = require( './env.js' )()
 
 test('create-without-error', async function (t) {
   t.plan(1)
 
+  process.env.DEBUG = '*'
+
   const options = {
-    ...env.push,
-    dirName: './test/fake-site',
+    ...env.create,
+    cwd: path.join(process.cwd(), 'test'),
     siteName: `wh-automated-test-${new Date().toISOString()}`
   }
 

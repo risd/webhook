@@ -32,6 +32,7 @@
     "axios": "^0.21.4",
     "colors": "~0.6.2",
     "commander": "~2.1.0",
+    "cpr": "^3.0.1",
     "debug": "^4.1.0",
     "firebase": "^9.9.0",
     "form-data": "^4.0.0",
