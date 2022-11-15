@@ -166,22 +166,28 @@ module.exports = function (argv) {
         siteName = siteName.replace(/\./g, ',1');
       }
       
-      require('./lib/init.js')({
-        siteName: siteName,
-        firebaseName: program.firebase,
-        firebaseToken: program.firebaseToken,
-        firebaseAPIKey: program.firebaseAPIKey,
-        server: program.server,
-        embedly: program.embedly,
-        generate: program.generate,
-        imgix_host: program.imgix_host,
-        imgix_secret: program.imgix_secret,
-        npm: program.npm,
-        node: program.node,
-        grunt: program.grunt,
-        email: program.email,
-        cache: program.cache
-      });
+      try {
+        await require('./lib/init.js')({
+          siteName: siteName,
+          firebaseName: program.firebase,
+          firebaseToken: program.firebaseToken,
+          firebaseAPIKey: program.firebaseAPIKey,
+          server: program.server,
+          embedly: program.embedly,
+          generate: program.generate,
+          imgix_host: program.imgix_host,
+          imgix_secret: program.imgix_secret,
+          npm: program.npm,
+          node: program.node,
+          grunt: program.grunt,
+          email: program.email,
+          cache: program.cache
+        })
+        console.log('Done initializing.'.green)
+      }
+      catch (error) {
+        console.log(error)
+      }
     });
 
   program.command('github')
