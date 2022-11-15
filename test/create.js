@@ -1,9 +1,9 @@
 process.env.DEBUG = '*'
 const test = require( 'tape' )
-const path = require('path')
-const create = require( '../lib/create.js' )
-const env = require( './env.js' )()
-Error['stackTraceLimit'] = Infinity;
+const path = require('node:path')
+const fs = require('node:fs')
+const create = require('../lib/create.js')
+const env = require('./env.js')()
 
 test.onFinish(process.exit)
 
