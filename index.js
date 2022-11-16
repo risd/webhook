@@ -516,6 +516,15 @@ module.exports = function (argv) {
           force: program.force,
           cache: program.cache
         })
+        console.log('========================================================'.blue);
+        console.log('# Update complete                                      #'.blue);
+        console.log('========================================================'.blue);
+        console.log('#'.blue + ' We updated your local copy.');
+        console.log('#'.blue + ' Run ' + 'wh deploy'.cyan + ' to deploy your changes live.')
+        console.log('# ---------------------------------------------------- #\n'.blue)
+      }
+      catch (error) {
+        console.log(error)
       }
     });
 
