@@ -629,24 +629,6 @@ module.exports = function (argv) {
       }
     });
 
-  program.command('clone-content-under <namespace>')
-    .description('Clones content type and current data under a new namespace.')
-    .action(function (namespace) {
-      
-      var contentTypes = ((typeof program.types === 'string')
-        ? program.types.split(',')
-        : '*' )
-
-      require('./lib/clone-content-under.js')({
-        firebaseName: program.firebase,
-        firebasefirebaseToken: program.firebaseToken,
-        firebaseAPIKey: program.firebaseAPIKey,
-        namespace: namespace,
-        contentTypes: contentTypes,
-      });
-
-    });
-
   program.command('deploy-static [siteName]')
     .description('Push a static snapshot of the current site, or --staticFolder to domains configured via `wh deploys`.')
     .action(function (siteName) {
@@ -720,7 +702,6 @@ module.exports.lib = {
   restore: require( './lib/restore.js' ),
   update: require( './lib/update.js' ),
   serve: require( './lib/serve.js' ),
-  cloneContentUnder: require('./lib/clone-content-under.js'),
   deployStatic: require('./lib/deploy-static.js'),
   pushStatic: require('./lib/push-static.js'),
   util: require('./lib/util/index.js'),
