@@ -2,6 +2,8 @@ const test = require( 'tape' )
 const push = require( '../lib/push.js' )
 const env = require( './env.js' )()
 
+test.onFinish(process.exit)
+
 test('push-without-error-module', async function (t) {
   t.plan(1)
 

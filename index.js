@@ -4,6 +4,7 @@ const program = require('commander')
 const errors = require('./lib/errors.js')
 const version = require('./package.json').version
 const printIntro = require('./lib/util/print-intro')
+const unescape = require( './lib/util/unescape-site' )
 
 module.exports = function (argv) {
 
@@ -365,16 +366,37 @@ module.exports = function (argv) {
   program.command('list-sites')
     .description('Lists all the sites that the user is an owner/user on')
     .action(function () {
-      require('./lib/list-sites.js')({
-        firebaseName: program.firebase,
-        firebaseToken: program.firebaseToken,
-        firebaseAPIKey: program.firebaseAPIKey,
-        server: program.server,
-        npm: program.npm,
-        node: program.node,
-        grunt: program.grunt,
-        email: program.email
-      });
+
+      try {
+        const { userSites } = await require('./lib/list-sites.js')({
+          firebaseName: program.firebase,
+          firebaseToken: program.firebaseToken,
+          firebaseAPIKey: program.firebaseAPIKey,
+          server: program.server,
+          npm: program.npm,
+          node: program.node,
+          grunt: program.grunt,
+          email: program.email
+        })
+        if( userSites.owners ) {
+          console.log(`The ${ program.platformName } sites I'm an owner of:`.green)
+          for(var site in userSites.owners) {
+            console.log(unescape(site))
+          }
+        }
+        if( userSites.users ) {
+          console.log(`The ${ program.platformName } sites I\'m a user of:`.blue)
+          for(var site in userSites.users) {
+            console.log(unescape( site ))
+          }
+        }
+        if(!userSites.users && !userSites.owners) {
+          console.log(`Not an owner or user for any site on ${ program.platformName }`.red)
+        }
+      }
+      catch (error) {
+        console.log(error)
+      }
     });
 
   program.command('preset-build')
