@@ -446,9 +446,12 @@ module.exports = function (argv) {
   program.command('backup <toFile>')
     .description('Generates a backup JSON file at the <toFile> from a webhook directory which includes data')
     .action(function (toFile) {
-      if ( Array.isArray( toFile ) )
+      if ( Array.isArray( toFile ) ) {
         toFile = toFile[0]
-
+      }
+      else {
+        toFile = 'backup.json'
+      }
       try {
         await require('./lib/preset-build.js')({
           firebaseName: program.firebase,
@@ -459,9 +462,10 @@ module.exports = function (argv) {
           node: program.node,
           grunt: program.grunt,
           email: program.email,
-          toFile: toFile || 'backup.json',
+          toFile,
           all: true,
         })
+        console.log(`Wrote site backup to: ${ toFile }`.green )
       }
       catch (error) {
         console.log(error)
@@ -471,20 +475,26 @@ module.exports = function (argv) {
   program.command('restore <fromFile>')
     .description('Restores database to state captured in backup file, such as one generated from `wh backup`')
     .action(function (fromFile) {
-      if ( Array.isArray( fromFile ) )
+      if ( Array.isArray( fromFile ) ) {
         fromFile = fromFile[0]
+      }
 
-      require('./lib/restore.js')({
-        firebaseName: program.firebase,
-        firebaseToken: program.firebaseToken,
-        firebaseAPIKey: program.firebaseAPIKey,
-        server: program.server,
-        npm: program.npm,
-        node: program.node,
-        grunt: program.grunt,
-        email: program.email,
-        fromFile: fromFile
-      });
+      try {
+        await require('./lib/restore.js')({
+          firebaseName: program.firebase,
+          firebaseToken: program.firebaseToken,
+          firebaseAPIKey: program.firebaseAPIKey,
+          server: program.server,
+          npm: program.npm,
+          node: program.node,
+          grunt: program.grunt,
+          email: program.email,
+          fromFile: fromFile
+        })
+      }
+      catch (error) {
+        console.log(error)
+      }
     });
 
   program.command('update')
