@@ -401,34 +401,46 @@ module.exports = function (argv) {
 
   program.command('preset-build')
     .description('Generates a .preset-data.json file from a webhook directory')
-    .action(function () {
-      require('./lib/preset-build.js')(false, {
-        firebaseName: program.firebase,
-        firebaseToken: program.firebaseToken,
-        firebaseAPIKey: program.firebaseAPIKey,
-        server: program.server,
-        npm: program.npm,
-        node: program.node,
-        grunt: program.grunt,
-        email: program.email,
-        toFile: null  // use the default
-      });
+    .action(async function () {
+      try {
+        await require('./lib/preset-build.js')({
+          firebaseName: program.firebase,
+          firebaseToken: program.firebaseToken,
+          firebaseAPIKey: program.firebaseAPIKey,
+          server: program.server,
+          npm: program.npm,
+          node: program.node,
+          grunt: program.grunt,
+          email: program.email,
+          toFile: null,  // use the default
+          all: false,
+        })
+      }
+      catch (error) {
+        console.log(error)
+      }
     });
 
   program.command('preset-build-all')
     .description('Generates a .preset-data.json file from a webhook directory which includes data')
     .action(function () {
-      require('./lib/preset-build.js')(true, {
-        firebaseName: program.firebase,
-        firebaseToken: program.firebaseToken,
-        firebaseAPIKey: program.firebaseAPIKey,
-        server: program.server,
-        npm: program.npm,
-        node: program.node,
-        grunt: program.grunt,
-        email: program.email,
-        toFile: null  // use the default
-      });
+      try {
+        await require('./lib/preset-build.js')(true, {
+          firebaseName: program.firebase,
+          firebaseToken: program.firebaseToken,
+          firebaseAPIKey: program.firebaseAPIKey,
+          server: program.server,
+          npm: program.npm,
+          node: program.node,
+          grunt: program.grunt,
+          email: program.email,
+          toFile: null,  // use the default
+          all: true,
+        })
+      }
+      catch (error) {
+        console.log(error)
+      }
     });
 
   program.command('backup <toFile>')
@@ -437,17 +449,23 @@ module.exports = function (argv) {
       if ( Array.isArray( toFile ) )
         toFile = toFile[0]
 
-      require('./lib/preset-build.js')(true, {
-        firebaseName: program.firebase,
-        firebaseToken: program.firebaseToken,
-        firebaseAPIKey: program.firebaseAPIKey,
-        server: program.server,
-        npm: program.npm,
-        node: program.node,
-        grunt: program.grunt,
-        email: program.email,
-        toFile: toFile || 'backup.json',
-      });
+      try {
+        await require('./lib/preset-build.js')({
+          firebaseName: program.firebase,
+          firebaseToken: program.firebaseToken,
+          firebaseAPIKey: program.firebaseAPIKey,
+          server: program.server,
+          npm: program.npm,
+          node: program.node,
+          grunt: program.grunt,
+          email: program.email,
+          toFile: toFile || 'backup.json',
+          all: true,
+        })
+      }
+      catch (error) {
+        console.log(error)
+      }
     });
 
   program.command('restore <fromFile>')
