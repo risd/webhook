@@ -5,6 +5,7 @@ const fs = require('node:fs')
 const create = require('../lib/create.js')
 const init = require('../lib/init.js')
 const create = require('../lib/conf.js')
+const deploys = require('../lib/deploys.js')
 const github = require('../lib/github.js')
 const env = require('./env.js')()
 
@@ -114,5 +115,21 @@ test('github-without-error', (t) => {
   }
   catch (error) {
     t.fail(error, 'Failed to remove github configuration')
+  }
+
+  const getDeploysOptions = {
+    ...env.deploys,
+    cwd: absSitePath,
+    siteName,
+  }
+
+  const expectedDefaultDeploys = [{
+    bucket: siteName,
+    branch: 'master',
+  }]
+
+  try {
+    const defaultDeployConfiguration = await deploys.DeployConfiguration(getDeploysOptions)
+    t.deepEqual(defaultDeployConfiguration.deploys, expectedDefaultDeploys, 'Sets default deploy configuration.')
   }
 })

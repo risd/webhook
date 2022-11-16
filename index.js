@@ -246,38 +246,63 @@ module.exports = function (argv) {
 
   program.command('deploys')
     .description('List all deploy configuration for the current webhook site')
-    .action(function () {
-      require('./lib/deploys.js')({
-        firebaseName: program.firebase,
-        firebaseToken: program.firebaseToken,
-        firebaseAPIKey: program.firebaseAPIKey,
-      })
+    .action(async function () {
+      const DeployConfiguration = require('./lib/deploys.js')
+      try {
+        const { deploys } = await DeployConfiguration({
+          firebaseName: program.firebase,
+          firebaseToken: program.firebaseToken,
+          firebaseAPIKey: program.firebaseAPIKey,
+        })
+
+        DeployConfiguration.log({ deploys })
+      }
+      catch (error) {
+        console.log(error)
+      }
     })
 
   program.command('deploys:set <bucketName>')
     .description('Set a bucket as the deploy destination. Use the --branch flag to override setting the deploy to use the current branch\'s set of templates.')
-    .action(function (bucketName) {
+    .action(async function (bucketName) {
       if (typeof bucketName !== 'string') console.log('Set requires a bucket name be passed in.')
 
-      require('./lib/deploys.js')({
-        firebaseName: program.firebase,
-        firebaseToken: program.firebaseToken,
-        firebaseAPIKey: program.firebaseAPIKey,
-        bucketSet: bucketName,
-      })
+      const DeployConfiguration = require('./lib/deploys.js')
+      try {
+        const { deploys } = await DeployConfiguration({
+          firebaseName: program.firebase,
+          firebaseToken: program.firebaseToken,
+          firebaseAPIKey: program.firebaseAPIKey,
+          branch: program.branch,
+          bucketSet: bucketName,
+        })
+
+        DeployConfiguration.log({ deploys })
+      }
+      catch (error) {
+        console.log(error)
+      }
     })
 
   program.command('deploys:remove <bucketName>')
     .description('Remove a bucket as a deploy destination.')
-    .action(function (bucketName) {
+    .action(async function (bucketName) {
       if ( typeof bucketName !== 'string' ) console.log( 'Set requires a bucket name be passed in.' )
+      
+      const DeployConfiguration = require('./lib/deploys.js')
+      try {
+        const { deploys } = await DeployConfiguration({
+          firebaseName: program.firebase,
+          firebaseToken: program.firebaseToken,
+          firebaseAPIKey: program.firebaseAPIKey,
+          bucketRemove: bucketName,
+        })
 
-      require('./lib/deploys.js')({
-        firebaseName: program.firebase,
-        firebaseToken: program.firebaseToken,
-        firebaseAPIKey: program.firebaseAPIKey,
-        bucketRemove: bucketName,
-      })
+        DeployConfiguration.log({ deploys })
+      }
+      catch (error) {
+        console.log(error)
+      }
     })
 
 

@@ -45,7 +45,7 @@
     "mkdirp": "^1.0.4",
     "node-uuid": "^1.4.7",
     "tar": "^6.1.11",
-    "webhook-deploy-configuration": "^3.0.1",
+    "webhook-deploy-configuration": "^3.0.3",
     "win-spawn": "~2.0.0",
     "wrench": "~1.5.4"
   },
