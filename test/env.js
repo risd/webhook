@@ -61,6 +61,16 @@ module.exports = function env () {
       firebaseName: process.env.FIREBASE_NAME,
       firebaseAPIKey: process.env.FIREBASE_API_KEY,
     },
+    deployStatic: {
+      email: process.env.WEBHOOK_USERNAME,
+      password: process.env.WEBHOOK_PASSWORD,
+      platformName: process.env.PLATFORM_NAME,
+      platformDomain: process.env.PLATFORM_DOMAIN,
+      firebaseName: process.env.FIREBASE_NAME,
+      firebaseAPIKey: process.env.FIREBASE_API_KEY,
+      gcloud: process.env.FIREBASE_SERVICE_ACCOUNT_KEY,
+      branch: 'master',
+    },
     cdnPurge: {
       url: process.env.PURGE_URL,
     },

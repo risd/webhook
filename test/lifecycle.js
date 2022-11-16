@@ -7,6 +7,7 @@ const init = require('../lib/init.js')
 const create = require('../lib/conf.js')
 const deploys = require('../lib/deploys.js')
 const github = require('../lib/github.js')
+const deployStatic = require('../lib/deploy-static.js')
 const env = require('./env.js')()
 
 const siteName = `wh-automated-test-${(new Date()).toISOString().replace(/:/g, '-').replace(/\./g, '-')}.${env.create.platformDomain}`
@@ -131,5 +132,21 @@ test('github-without-error', (t) => {
   try {
     const defaultDeployConfiguration = await deploys.DeployConfiguration(getDeploysOptions)
     t.deepEqual(defaultDeployConfiguration.deploys, expectedDefaultDeploys, 'Sets default deploy configuration.')
+  }
+})
+
+test('deploy-static', async (t) => {
+  try {
+    const options = {
+      ...env.deployStatic,
+      cwd: absSitePath,
+      siteName,
+    }
+
+    await deployStatic(options)
+    t.ok(true, 'Deploy static site successfully')
+  }
+  catch (error) {
+    t.fail(error, 'Faield to deploy static site')
   }
 })
