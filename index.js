@@ -528,53 +528,9 @@ module.exports = function (argv) {
       }
     });
 
-  program.command('push')
-    .description('Push webhook directory to server')
-    .action(async function () {
-      try {
-        await require('./lib/push.js')({
-          firebaseName: program.firebase,
-          firebaseToken: program.firebaseToken,
-          firebaseAPIKey: program.firebaseAPIKey,
-          server: program.server,
-          npm: program.npm,
-          node: program.node,
-          grunt: program.grunt,
-          email: program.email
-        });
-        console.log('========================================================'.blue);
-        console.log('# Success. Your templates were deployed.'.blue);
-        console.log('========================================================'.blue);
-      }
-      catch (error) {
-        switch (error.code) {
-          case errors.ERROR_IN_SITE_BUILD:
-            console.log('========================================================'.red);
-            console.log('# Deploy halted. Templates not pushed.'.red);
-            console.log('========================================================'.red);
-            console.log('# There was an error in your build and we don\'t want to'.red);
-            console.log('# deploy it to your live version. Please check over your'.red);
-            console.log('# templates before trying to deploy again.'.red);
-            console.log('# ---------------------------------------------------- #'.red)
-            break;
-          case errors.ERROR_PUSH_SITE_UPLOAD:
-            console.log('========================================================'.red);
-            console.log('# Deploy upload failed. Templates not pushed.'.red);
-            console.log('========================================================'.red);
-            console.log('# There was an error in your file upload.'.red);
-            console.log('# Try again shortly or check on the server status.'.red);
-            console.log('# ---------------------------------------------------- #'.red)
-            break;
-          default:
-            console.log(error)
-        }
-      }
-    });
-    
-  program.command('deploy')
-    .description('Push webhook directory to server')
-    .action(function () {
-      require('./lib/push.js')({
+  async function pusher () {
+    try {
+      await require('./lib/push.js')({
         firebaseName: program.firebase,
         firebaseToken: program.firebaseToken,
         firebaseAPIKey: program.firebaseAPIKey,
@@ -585,18 +541,60 @@ module.exports = function (argv) {
         email: program.email,
         skipBuild: program.skipBuild,
       });
-    });
+      console.log('========================================================'.blue);
+      console.log('# Success. Your templates were deployed.'.blue);
+      console.log('========================================================'.blue);
+    }
+    catch (error) {
+      switch (error.code) {
+        case errors.ERROR_IN_SITE_BUILD:
+          console.log('========================================================'.red);
+          console.log('# Deploy halted. Templates not pushed.'.red);
+          console.log('========================================================'.red);
+          console.log('# There was an error in your build and we don\'t want to'.red);
+          console.log('# deploy it to your live version. Please check over your'.red);
+          console.log('# templates before trying to deploy again.'.red);
+          console.log('# ---------------------------------------------------- #'.red)
+          break;
+        case errors.ERROR_PUSH_SITE_UPLOAD:
+          console.log('========================================================'.red);
+          console.log('# Deploy upload failed. Templates not pushed.'.red);
+          console.log('========================================================'.red);
+          console.log('# There was an error in your file upload.'.red);
+          console.log('# Try again shortly or check on the server status.'.red);
+          console.log('# ---------------------------------------------------- #'.red)
+          break;
+        default:
+          console.log(error)
+      }
+    }
+  }
+
+  program.command('push')
+    .description('Push webhook directory to server')
+    .action(pusher)
+    
+  program.command('deploy')
+    .description('Push webhook directory to server')
+    .action(pusher)
 
   program.command('map-domain <maskDomain> [contentDomain]')
     .description('Configure the maskDomain to pull content from the contentDomain.')
-    .action(function ( maskDomain, contentDomain ) {
-      require('./lib/map-domain')({
-        firebaseName: program.firebase,
-        firebaseToken: program.firebaseToken,
-        firebaseAPIKey: program.firebaseAPIKey,
-        maskDomain: maskDomain,
-        contentDomain: contentDomain,
-      })
+    .action(async function ( maskDomain, contentDomain ) {
+      try {
+        await require('./lib/map-domain')({
+          firebaseName: program.firebase,
+          firebaseToken: program.firebaseToken,
+          firebaseAPIKey: program.firebaseAPIKey,
+          maskDomain: maskDomain,
+          contentDomain: contentDomain,
+        })
+        if (contentDomain) console.log(`Signaled server to set ${ maskDomain } to pull content from ${ contentDomain }`)
+        else console.log(`Signaled server to remove the domain ${ maskDomain } from content mapping configuration.`)
+      }
+      catch (error) {
+        console.log(error)
+      }
     })
 
   program.command('serve [port]')
