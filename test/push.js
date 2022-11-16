@@ -12,7 +12,7 @@ test('push-without-error-module', async function (t) {
     branch: 'webhook-test',
     skipBuild: 'true',
     http: false,
-    dirName: './test/fake-site',
+    cwd: './test/fake-site',
   }
 
   try {

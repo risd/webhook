@@ -7,7 +7,11 @@ const init = require('../lib/init.js')
 const create = require('../lib/conf.js')
 const deploys = require('../lib/deploys.js')
 const github = require('../lib/github.js')
+const backup = require('../lib/preset-build')
+const restore = require('../lib/restore')
 const deployStatic = require('../lib/deploy-static.js')
+const pushStatic = require('../lib/push-static.js')
+const update = require('../lib/update.js')
 const env = require('./env.js')()
 
 const siteName = `wh-automated-test-${(new Date()).toISOString().replace(/:/g, '-').replace(/\./g, '-')}.${env.create.platformDomain}`
@@ -72,8 +76,6 @@ test('conf-without-error', async (t) => {
 })
 
 test('github-without-error', (t) => {
-  t.plan(3)
-
   const setSptions = {
     ...env.conf,
     cwd: absSitePath,
@@ -86,6 +88,7 @@ test('github-without-error', (t) => {
     t.ok(github === setSptions.gitSet, 'Set github configuration')
   }
   catch (error) {
+    console.log(error)
     t.fail(error, 'Failed to set github configuration')
   }
 
@@ -115,6 +118,7 @@ test('github-without-error', (t) => {
     t.ok(true, 'Removed github configuration')
   }
   catch (error) {
+    console.log(error)
     t.fail(error, 'Failed to remove github configuration')
   }
 
@@ -133,20 +137,81 @@ test('github-without-error', (t) => {
     const defaultDeployConfiguration = await deploys.DeployConfiguration(getDeploysOptions)
     t.deepEqual(defaultDeployConfiguration.deploys, expectedDefaultDeploys, 'Sets default deploy configuration.')
   }
+  catch (error) {
+    console.log(error)
+    t.fail(error, 'Failed to set default deploy configuration.')
+  }
+
+  t.end()
 })
 
-test('deploy-static', async (t) => {
+test('backup-and-restore', async (t) => {
+  try {
+    const backupFile = path.join(absSitePath, 'backup.json')
+    const backupOptions = {
+      ...env.backup,
+      siteName,
+      cwd: absSitePath,
+      toFile: backupFile,
+      all: true,
+    }
+
+    await backup(backupOptions)
+    t.ok(true, 'Successfully backed up site.')
+
+    const restoreOptions = {
+      ...env.restore,
+      siteName,
+      cwd: absSitePath,
+      fromFile: backupFile,
+    }
+
+    const { updated } = await restore(restoreOptions)
+    t.ok(updated.data, 'Successfully restored site from backup.')
+  }
+  catch (error) {
+    console.log(error)
+    t.fail(error, 'Faield to backup and restore')
+  }
+
+  t.end()
+})
+
+test('push-static', async (t) => {
+  t.plan(1)
+
   try {
     const options = {
-      ...env.deployStatic,
-      cwd: absSitePath,
-      siteName,
+      ...env.pushStatic,
+      domain: siteName,
     }
 
     await deployStatic(options)
-    t.ok(true, 'Deploy static site successfully')
+    t.ok(true, 'Pushed static site successfully')
   }
   catch (error) {
-    t.fail(error, 'Faield to deploy static site')
+    console.log(error)
+    t.fail(error, 'Faield to push static site')
   }
 })
+
+test('update', async (t) => {
+  t.plan(1)
+
+  try {
+    const options = {
+      ...env.update,
+      siteName,
+      cwd: absSitePath,
+      force: true,
+    }
+
+    await update(options)
+    t.ok(true, 'Successfully updated site')
+  }
+  catch (error) {
+    console.log(error)
+    t.fail(error, 'Failed to update site')
+  }
+})
+

@@ -118,42 +118,6 @@ module.exports = function (argv) {
       }
     });
 
-  program.command('delete <siteName>')
-    .description('Delete a site from webhook')
-    .action(async function (siteName) {
-      if ( Array.isArray( siteName ) )
-        siteName = siteName[0]
-
-      try {
-        siteName = siteName.toLowerCase();  
-      } catch (error) {
-        throw new Error(
-          'siteName: ' + siteName + '\n' +
-          'Requires a valid site name.' )
-      }
-
-      if(program.firebase) {
-        siteName = siteName.replace(/\./g, ',1');
-      }
-
-      try {
-        await require('./lib/delete.js')({
-          siteName: siteName,
-          firebaseName: program.firebase,
-          firebaseToken: program.firebaseToken,
-          firebaseAPIKey: program.firebaseAPIKey,
-          npm: program.npm,
-          node: program.node,
-          grunt: program.grunt,
-          email: program.email,
-          force: program.force
-        })
-      }
-      catch (error) {
-        console.log(error)
-      }
-    });
-
   program.command('init <siteName>')
     .description('Initializes a site with configuration files')
     .action(async function (siteName) {
@@ -461,7 +425,6 @@ module.exports = function (argv) {
           npm: program.npm,
           node: program.node,
           grunt: program.grunt,
-          email: program.email,
           toFile,
           all: true,
         })
@@ -599,7 +562,7 @@ module.exports = function (argv) {
 
   program.command('serve [port]')
     .description('Serves a webhook site locally')
-    .action(function (port) {
+    .action(async function (port) {
       try {
         await require('./lib/serve.js')({
           port: port || null,
@@ -631,7 +594,7 @@ module.exports = function (argv) {
 
   program.command('deploy-static [siteName]')
     .description('Push a static snapshot of the current site, or --staticFolder to domains configured via `wh deploys`.')
-    .action(function (siteName) {
+    .action(async function (siteName) {
       try {
         await require('./lib/deploy-static.js')({
           firebaseName: program.firebase,
@@ -652,33 +615,50 @@ module.exports = function (argv) {
 
   program.command('push-static [domain]')
     .description('Push a static directory (--staticFolder) to the domain passed in as the first argument, augmented by the current git branch (or --gitBranch value).')
-    .action(function (domain) {
-
-      require('./lib/push-static.js')({
-        debug: program.debug,
-        gcloud: program.gcloud,
-        branch: program.branch,
-        baseDomain: domain,
-        staticFolder: program.staticFolder,
-        staticPrefix: program.staticPrefix,
-      })
+    .action(async function (domain) {
+      try {
+        const { directory, siteName, sitePath } = await require('./lib/push-static.js')({
+          debug: program.debug,
+          gcloud: program.gcloud,
+          branch: program.branch,
+          baseDomain: domain,
+          staticFolder: program.staticFolder,
+          staticPrefix: program.staticPrefix,
+        })
+        console.log( ''+
+          'Successfully uploaded directory to site.' +
+          '\nDirectory: ' + directory +
+          '\nSite:      ' + siteName +
+          '\nSite path: ' + sitePath)
+      }
+      catch (error) {
+        console.log(error)
+      }
     })
 
   program.command('echo-options')
     .description('Echos options passed into this command, used for debugging')
     .action(function() {
-      console.log(program.firebase);
-      console.log(program.firebaseToken);
-      console.log(program.firebaseAPIKey);
-      console.log(program.server);
-      console.log(program.embedly);
-      console.log(program.generate);
-      console.log(program.imgix_host);
-      console.log(program.imgix_secret);
-      console.log(program.npm);
-      console.log(program.node);
-      console.log(program.grunt);
-      console.log(program.email);
+      console.log(`firebase: ${program.firebase}`)
+      console.log(`firebaseToken: ${program.firebaseToken}`)
+      console.log(`firebaseAPIKey: ${program.firebaseAPIKey}`)
+      console.log(`server: ${program.server}`)
+      console.log(`embedly: ${program.embedly}`)
+      console.log(`generate: ${program.generate}`)
+      console.log(`imgix_host: ${program.imgix_host}`)
+      console.log(`imgix_secret: ${program.imgix_secret}`)
+      console.log(`npm: ${program.npm}`)
+      console.log(`node: ${program.node}`)
+      console.log(`grunt: ${program.grunt}`)
+      console.log(`email: ${program.email}`)
+      console.log(`debug: ${program.debug}`)
+      console.log(`types: ${program.types}`)
+      console.log(`skipBuild: ${program.skipBuild}`)
+      console.log(`gcloud: ${program.gcloud}`)
+      console.log(`staticFolder: ${program.staticFolder}`)
+      console.log(`staticPrefix: ${program.staticPrefix}`)
+      console.log(`force: ${program.force}`)
+      console.log(`platformName: ${program.platformName}`)
     });
 
   program
@@ -692,7 +672,6 @@ module.exports.lib = {
   init: require('./lib/init.js'),
   conf: require('./lib/conf.js'),
   create: require('./lib/create.js'),
-  delete: require('./lib/delete.js'),
   push: require( './lib/push.js' ),
   deploys: require( './lib/deploys.js' ),
   github: require( './lib/github.js' ),
