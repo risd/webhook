@@ -600,19 +600,33 @@ module.exports = function (argv) {
   program.command('serve [port]')
     .description('Serves a webhook site locally')
     .action(function (port) {
-      require('./lib/serve.js')({
-        port: port || null,
-        firebaseName: program.firebase,
-        firebaseToken: program.firebaseToken,
-        firebaseAPIKey: program.firebaseAPIKey,
-        server: program.server,
-        npm: program.npm,
-        node: program.node,
-        grunt: program.grunt,
-        email: program.email,
-        cache: program.cache,
-        skipBuild: program.skipBuild,
-      });
+      try {
+        await require('./lib/serve.js')({
+          port: port || null,
+          firebaseName: program.firebase,
+          firebaseToken: program.firebaseToken,
+          firebaseAPIKey: program.firebaseAPIKey,
+          server: program.server,
+          npm: program.npm,
+          node: program.node,
+          grunt: program.grunt,
+          email: program.email,
+          cache: program.cache,
+          skipBuild: program.skipBuild,
+        })
+      }
+      catch (error) {
+        switch (error.code) {
+          case errors.ERROR_RUNNING_GRUNT_SERVE:
+            console.log(error)
+            console.log('There was an error trying to run this command'.red);
+            console.log('Please make sure you have grunt installed'.red);
+            break;
+          default:
+            console.log(error)
+        }
+        
+      }
     });
 
   program.command('clone-content-under <namespace>')
@@ -636,16 +650,22 @@ module.exports = function (argv) {
   program.command('deploy-static [siteName]')
     .description('Push a static snapshot of the current site, or --staticFolder to domains configured via `wh deploys`.')
     .action(function (siteName) {
-
-      require('./lib/deploy-static.js')({
-        firebaseName: program.firebase,
-        firebasefirebaseToken: program.firebaseToken,
-        firebaseAPIKey: program.firebaseAPIKey,
-        gcloud: program.gcloud,
-        staticFolder: program.staticFolder,
-        staticPrefix: program.staticPrefix,
-        siteName: siteName,
-      })
+      try {
+        await require('./lib/deploy-static.js')({
+          firebaseName: program.firebase,
+          firebasefirebaseToken: program.firebaseToken,
+          firebaseAPIKey: program.firebaseAPIKey,
+          gcloud: program.gcloud,
+          staticFolder: program.staticFolder,
+          staticPrefix: program.staticPrefix,
+          siteName: siteName,
+          skipBuild: program.skipBuild,
+          branch: program.branch,
+        }) 
+      }
+      catch (error) {
+        console.log(error)
+      }
     })
 
   program.command('push-static [domain]')
