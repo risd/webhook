@@ -500,21 +500,23 @@ module.exports = function (argv) {
   program.command('update')
     .description('Updates a webhook site with the latest generate code')
     .action(function () {
-      require('./lib/update.js')({
-        firebaseName: program.firebase,
-        firebaseToken: program.firebaseToken,
-        firebaseAPIKey: program.firebaseAPIKey,
-        server: program.server,
-        embedly: program.embedly,
-        imgix_host: program.imgix_host,
-        imgix_secret: program.imgix_secret,
-        npm: program.npm,
-        node: program.node,
-        grunt: program.grunt,
-        email: program.email,
-        force: program.force,
-        cache: program.cache
-      });
+      try {
+        await require('./lib/update.js')({
+          firebaseName: program.firebase,
+          firebaseToken: program.firebaseToken,
+          firebaseAPIKey: program.firebaseAPIKey,
+          server: program.server,
+          embedly: program.embedly,
+          imgix_host: program.imgix_host,
+          imgix_secret: program.imgix_secret,
+          npm: program.npm,
+          node: program.node,
+          grunt: program.grunt,
+          email: program.email,
+          force: program.force,
+          cache: program.cache
+        })
+      }
     });
 
   program.command('push')
