@@ -1,16 +1,10 @@
-/* run this test last since it needs to process.exit on finish */
-
 const test = require( 'tape' )
 const FirebaseInterface = require( '../lib/util/firebase/index.js' )
 const env = require( './env.js' )()
 
 const firebaseInterface = FirebaseInterface( env.firebaseInterface )
 
-test.onFinish( function () {
-  // FirebaseInterface will hang the process indefinitely, so we
-  // have to manually close it out.
-  process.exit()
-} )
+test.onFinish(process.exit)
 
 test( 'database', function ( t ) {
   t.plan( 1 )

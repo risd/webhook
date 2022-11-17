@@ -4,7 +4,7 @@ const path = require('node:path')
 const fs = require('node:fs')
 const create = require('../lib/create.js')
 const init = require('../lib/init.js')
-const create = require('../lib/conf.js')
+const conf = require('../lib/conf.js')
 const deploys = require('../lib/deploys.js')
 const github = require('../lib/github.js')
 const backup = require('../lib/preset-build')
@@ -16,9 +16,13 @@ const env = require('./env.js')()
 
 const siteName = `wh-automated-test-${(new Date()).toISOString().replace(/:/g, '-').replace(/\./g, '-')}.${env.create.platformDomain}`
 const siteParentDir = path.join(process.cwd(), 'test')
-const absSitePath = path.join(cwd, siteName)
+const absSitePath = path.join(siteParentDir, siteName)
+const siteBuildDir = path.join(absSitePath, '.build')
 
-test.onFinish(process.exit)
+test.onFinish(() => {
+  fs.unlinkSync(absSitePath)
+  process.exit()
+})
 
 test('create-without-error', async (t) => {
   t.plan(1)
@@ -56,7 +60,7 @@ test('init-without-error', async (t) => {
   }
 })
 
-test('conf-without-error', async (t) => {
+test('conf', async (t) => {
   t.plan(1)
 
   const options = {
@@ -75,7 +79,7 @@ test('conf-without-error', async (t) => {
   }
 })
 
-test('github-without-error', (t) => {
+test('github-without-error', async (t) => {
   const setSptions = {
     ...env.conf,
     cwd: absSitePath,
@@ -84,8 +88,8 @@ test('github-without-error', (t) => {
   }
 
   try {
-    const { github }  = await github(setSptions)
-    t.ok(github === setSptions.gitSet, 'Set github configuration')
+    const config  = await github(setSptions)
+    t.ok(config.github === setSptions.gitSet, 'Set github configuration')
   }
   catch (error) {
     console.log(error)
@@ -99,8 +103,8 @@ test('github-without-error', (t) => {
   }
 
   try {
-    const { github } = await github(getOptions)
-    t.ok(github === setSptions.gitSet, 'Got github configuration')
+    const config = await github(getOptions)
+    t.ok(config.github === setSptions.gitSet, 'Got github configuration')
   }
   catch (error) {
     t.fail(error, 'Failed to get github configuration')
@@ -121,7 +125,9 @@ test('github-without-error', (t) => {
     console.log(error)
     t.fail(error, 'Failed to remove github configuration')
   }
+})
 
+test('deploy-config', async (t) => {
   const getDeploysOptions = {
     ...env.deploys,
     cwd: absSitePath,
@@ -134,8 +140,9 @@ test('github-without-error', (t) => {
   }]
 
   try {
-    const defaultDeployConfiguration = await deploys.DeployConfiguration(getDeploysOptions)
-    t.deepEqual(defaultDeployConfiguration.deploys, expectedDefaultDeploys, 'Sets default deploy configuration.')
+    const defaultDeployConfiguration = await deploys(getDeploysOptions)
+    console.log(deploys.log(defaultDeployConfiguration))
+    t.ok(true, 'Sets default deploy configuration.')
   }
   catch (error) {
     console.log(error)
@@ -167,7 +174,7 @@ test('backup-and-restore', async (t) => {
     }
 
     const { updated } = await restore(restoreOptions)
-    t.ok(updated.data, 'Successfully restored site from backup.')
+    t.ok(updated, 'Successfully restored site from backup.')
   }
   catch (error) {
     console.log(error)
@@ -177,16 +184,37 @@ test('backup-and-restore', async (t) => {
   t.end()
 })
 
+test('deploy-static', async (t) => {
+  t.plan(1)
+
+  try {
+    const options = {
+      ...env.deployStatic,
+      branch: 'master',
+      siteName,
+      cwd: absSitePath,
+    }
+    await deployStatic(options)
+    t.ok('Successfully deployed static site.')
+  }
+  catch (error) {
+    console.log(error)
+    t.fail(error, 'Failed to deploy static site.')
+  }
+})
+
 test('push-static', async (t) => {
   t.plan(1)
 
   try {
     const options = {
       ...env.pushStatic,
-      domain: siteName,
+      baseDomain: 'wh-automated-test.risd.systems',
+      staticFolder: siteBuildDir,
+      branch: 'master',
     }
 
-    await deployStatic(options)
+    await pushStatic(options)
     t.ok(true, 'Pushed static site successfully')
   }
   catch (error) {

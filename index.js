@@ -112,7 +112,7 @@ module.exports = function (argv) {
             console.log('Could not download generator from npm.'.red)
             console.log(error)
             break
-          default
+          default:
             console.log(error)
         }
       }
@@ -206,6 +206,9 @@ module.exports = function (argv) {
           gitRemove: true,
         })
         console.log(`Removed github user/repo configure for ${ siteName }`)
+      }
+      catch (error) {
+        console.log(error)
       }
     })
 
@@ -329,7 +332,7 @@ module.exports = function (argv) {
 
   program.command('list-sites')
     .description('Lists all the sites that the user is an owner/user on')
-    .action(function () {
+    .action(async function () {
 
       try {
         const { userSites } = await require('./lib/list-sites.js')({
@@ -387,7 +390,7 @@ module.exports = function (argv) {
 
   program.command('preset-build-all')
     .description('Generates a .preset-data.json file from a webhook directory which includes data')
-    .action(function () {
+    .action(async function () {
       try {
         await require('./lib/preset-build.js')(true, {
           firebaseName: program.firebase,
@@ -409,7 +412,7 @@ module.exports = function (argv) {
 
   program.command('backup <toFile>')
     .description('Generates a backup JSON file at the <toFile> from a webhook directory which includes data')
-    .action(function (toFile) {
+    .action(async function (toFile) {
       if ( Array.isArray( toFile ) ) {
         toFile = toFile[0]
       }
@@ -437,7 +440,7 @@ module.exports = function (argv) {
 
   program.command('restore <fromFile>')
     .description('Restores database to state captured in backup file, such as one generated from `wh backup`')
-    .action(function (fromFile) {
+    .action(async function (fromFile) {
       if ( Array.isArray( fromFile ) ) {
         fromFile = fromFile[0]
       }
@@ -462,7 +465,7 @@ module.exports = function (argv) {
 
   program.command('update')
     .description('Updates a webhook site with the latest generate code')
-    .action(function () {
+    .action(async function () {
       try {
         await require('./lib/update.js')({
           firebaseName: program.firebase,

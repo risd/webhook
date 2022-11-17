@@ -83,7 +83,6 @@ module.exports = function env () {
       firebaseName: process.env.FIREBASE_NAME,
       firebaseAPIKey: process.env.FIREBASE_API_KEY,
       gcloud: process.env.FIREBASE_SERVICE_ACCOUNT_KEY,
-      branch: 'master',
     },
     pushStatic: {
       email: process.env.WEBHOOK_USERNAME,
@@ -91,7 +90,6 @@ module.exports = function env () {
       platformName: process.env.PLATFORM_NAME,
       platformDomain: process.env.PLATFORM_DOMAIN,
       gcloud: process.env.FIREBASE_SERVICE_ACCOUNT_KEY,
-      branch: 'feature/ui-v2',
     },
     update: {
       email: process.env.WEBHOOK_USERNAME,

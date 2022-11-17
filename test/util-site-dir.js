@@ -5,14 +5,19 @@ const env = require( './env.js' )()
 
 env.utilSiteDir.siteName = unescapeSite( env.utilSiteDir.siteName )
 
-test( 'push-without-error-util', function ( t ) {
+test( 'push-without-error-util', async function ( t ) {
   t.plan( 1 )
 
-  const pushOptions = Object.assign( {}, env.utilSiteDir, {
+  const pushOptions = {
+    ...env.utilSiteDir,
     directory: './test/assets',
-  } )
+  }
 
-  siteDir( pushOptions, function onPush ( error ) {
-    t.notOk( error, 'finishes without error' )
-  } )
+  try {
+    await siteDir.asPromise(pushOptions)
+    t.ok(true, 'successfully finished site dir push' )
+  }
+  catch (error) {
+    t.fail(error, 'failed to finish site dir push')
+  }
 } )

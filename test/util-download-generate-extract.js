@@ -5,9 +5,10 @@ const env = require( './env.js' )()
 
 const fs = require( 'fs' )
 const path = require( 'path' )
-const extractToPath = path.join( process.cwd(), 'package' )
+const testDir = path.join(process.cwd(), 'test')
+const extractToPath = path.join(testDir, 'package' )
 const extractedPackagePath = path.join( extractToPath, 'package.json' )
-const generatePath = path.join( process.cwd(), '.generate-repo.tgz' )
+const generatePath = path.join(testDir, '.generate-repo.tgz' )
 
 fs.mkdirSync( extractToPath, { recursive: true } )
 
@@ -19,24 +20,26 @@ test.onFinish( function () {
   } )
 } )
 
-test( 'download-generate:success', function ( t ) {
-  t.plan( 2 )
+test( 'download-generate:success', async function ( t ) {
+  t.plan( 1 )
 
-  downloadGenerate( env.downloadGenerate.generate, handleDownload )
-
-  function handleDownload ( error, fileName ) {
-    t.notOk( error, 'finish without error' )
+  try {
+    const fileName = await downloadGenerate({ packageOrUrl: env.downloadGenerate.generate, cwd: testDir })
     t.ok( typeof fileName === 'string', 'finish with generate file name' )
+  }
+  catch (error) {
+    t.fail( error, 'finish without error' )
   }
 } )
 
-test( 'download-generate:failure', function ( t ) {
+test( 'download-generate:failure', async function ( t ) {
   t.plan( 1 )
-
-  downloadGenerate( '--bad-npm-package-name--', handleDownload )
-
-  function handleDownload ( error ) {
-    t.ok( error, 'finishes with error' )
+  try {
+    const fileName = await downloadGenerate({ packageOrUrl: '--bad-npm-package-name--', cwd: testDir })
+    t.fail( typeof fileName === 'string', 'bad npm package name succeded when it shouldh have failed' )
+  }
+  catch (error) {
+    t.ok( error, 'finishes with error as expected' )
   }
 } )
 
