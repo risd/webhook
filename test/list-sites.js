@@ -1,10 +1,10 @@
-const test = require( 'tape' )
-const listSites = require( '../lib/list-sites.js' )
-const env = require( './env.js' )()
+const test = require("tape")
+const listSites = require("../lib/list-sites.js")
+const env = require("./env.js")()
 
 test.onFinish(process.exit)
 
-test('push-without-error-module', async function (t) {
+test("push-without-error-module", async function (t) {
   t.plan(1)
 
   const options = {
@@ -15,8 +15,7 @@ test('push-without-error-module', async function (t) {
     const { userSites } = await listSites(options)
     console.log(userSites)
     t.ok(true)
-  }
-  catch (error) {
+  } catch (error) {
     t.fail(error)
   }
-} )
+})

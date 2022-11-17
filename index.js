@@ -1,61 +1,120 @@
-process.env.DEBUG = '*'
-require('colors')
-const program = require('commander')
-const errors = require('./lib/errors.js')
-const version = require('./package.json').version
-const printIntro = require('./lib/util/print-intro')
-const unescape = require( './lib/util/unescape-site' )
+process.env.DEBUG = "*"
+require("colors")
+const program = require("commander")
+const errors = require("./lib/errors.js")
+const version = require("./package.json").version
+const printIntro = require("./lib/util/print-intro")
+const unescape = require("./lib/util/unescape-site")
 
 module.exports = function (argv) {
+  program
+    .version(version)
+    .option(
+      "-f, --firebase [firebaseName]",
+      "Use the specified firebase instead of webhook main, for self hosting mode"
+    )
+    .option(
+      "-t, --firebaseToken [firebaseToken]",
+      "Use this auth token for firebase instead of prompting for login"
+    )
+    .option(
+      "-s, --server [uploadserver]",
+      "Use this server when uploading files, for self hosting mode"
+    )
+    .option(
+      "-m, --embedly [embedly]",
+      "Use this embedly key when writing .firebase.conf, for self hosting mode"
+    )
+    .option(
+      "-b, --generate [generate]",
+      "Use this generator URL when creating a new site, for self hosting mode"
+    )
+    .option(
+      "-h, --imgix_host [imgixhost]",
+      "Use this URL for imgix CDN serving, for self hosting mode"
+    )
+    .option(
+      "-x, --imgix_secret [imgixsecret]",
+      "Use this secret to sign imgix URLs, for self hosting mode"
+    )
+    .option(
+      "-n, --npm [npmPath]",
+      "Use this npm executable over the default one (npm)"
+    )
+    .option(
+      "-o, --node [nodePath]",
+      "Use this node executable over the default one (node)"
+    )
+    .option(
+      "-g, --grunt [gruntPath]",
+      "Use this grunt executable over the default one (grunt)"
+    )
+    .option("-f, --force [force]", "If true, will force update")
+    .option("-c, --cache [cacheDir]", "Sets the directory to use for npm cache")
+    .option(
+      "-e, --email [email]",
+      "The e-mail address to use when using the --token option"
+    )
+    .option(
+      "-d, --debug",
+      "Set to debug mode. Logs out progress through processes."
+    )
+    .option(
+      "--types [contentTypes]",
+      "Clone these content types. If omitted, all content types are cloned."
+    )
+    .option(
+      "--skipBuild",
+      "Skips the site build as a step to ensure templates are okay before deploying."
+    )
+    .option("--gcloud [gcloud]", "Path to Google Project JSON file.")
+    .option(
+      "--staticFolder [staticFolder]",
+      "Path to local folder to push folder."
+    )
+    .option(
+      "--staticPrefix [staticPrefix]",
+      "Prefix to add to the static directory being pushed."
+    )
+    .option(
+      "--branch [branch]",
+      "Git branch to use, instead of the current branch."
+    )
+    .option(
+      "--firebaseAPIKey [firebaseAPIKey]",
+      "The Firebase web API key to use."
+    )
+    .option(
+      "--platformName [platformName]",
+      "The name of the webhook publishing platform instance."
+    )
+    .option(
+      "--force [force]",
+      "Skip any interactive prompts to confirm command execution."
+    )
 
-  program.version(version)
-    .option('-f, --firebase [firebaseName]', 'Use the specified firebase instead of webhook main, for self hosting mode')
-    .option('-t, --firebaseToken [firebaseToken]', 'Use this auth token for firebase instead of prompting for login')
-    .option('-s, --server [uploadserver]', 'Use this server when uploading files, for self hosting mode')
-    .option('-m, --embedly [embedly]', 'Use this embedly key when writing .firebase.conf, for self hosting mode')
-    .option('-b, --generate [generate]', 'Use this generator URL when creating a new site, for self hosting mode')
-    .option('-h, --imgix_host [imgixhost]', 'Use this URL for imgix CDN serving, for self hosting mode')
-    .option('-x, --imgix_secret [imgixsecret]', 'Use this secret to sign imgix URLs, for self hosting mode')
-    .option('-n, --npm [npmPath]', 'Use this npm executable over the default one (npm)')
-    .option('-o, --node [nodePath]', 'Use this node executable over the default one (node)')
-    .option('-g, --grunt [gruntPath]', 'Use this grunt executable over the default one (grunt)')
-    .option('-f, --force [force]', 'If true, will force update')
-    .option('-c, --cache [cacheDir]', 'Sets the directory to use for npm cache')
-    .option('-e, --email [email]', 'The e-mail address to use when using the --token option')
-    .option('-d, --debug', 'Set to debug mode. Logs out progress through processes.')
-    .option('--types [contentTypes]', 'Clone these content types. If omitted, all content types are cloned.')
-    .option('--skipBuild', 'Skips the site build as a step to ensure templates are okay before deploying.')
-    .option('--gcloud [gcloud]', 'Path to Google Project JSON file.')
-    .option('--staticFolder [staticFolder]', 'Path to local folder to push folder.')
-    .option('--staticPrefix [staticPrefix]', 'Prefix to add to the static directory being pushed.')
-    .option('--branch [branch]', 'Git branch to use, instead of the current branch.')
-    .option('--firebaseAPIKey [firebaseAPIKey]', 'The Firebase web API key to use.')
-    .option('--platformName [platformName]', 'The name of the webhook publishing platform instance.')
-    .option('--force [force]', 'Skip any interactive prompts to confirm command execution.')
-
-  program.command('create <siteName>')
-    .description('Create a new webhook site')
+  program
+    .command("create <siteName>")
+    .description("Create a new webhook site")
     .action(async function (siteName) {
-      if ( Array.isArray( siteName ) )
-        siteName = siteName[0]
+      if (Array.isArray(siteName)) siteName = siteName[0]
 
       try {
-        siteName = siteName.toLowerCase();  
+        siteName = siteName.toLowerCase()
       } catch (error) {
         throw new Error(
-          'siteName: ' + siteName + '\n' +
-          'Requires a valid site name.' )
+          "siteName: " + siteName + "\n" + "Requires a valid site name."
+        )
       }
-      
 
-      if(program.firebase) {
-        siteName = siteName.replace(/\./g, ',1');
+      if (program.firebase) {
+        siteName = siteName.replace(/\./g, ",1")
       }
 
       printIntro(program.platformName)
 
       try {
-        await require('./lib/create.js')({
+        await require("./lib/create.js")({
           siteName: siteName,
           firebaseName: program.firebase,
           firebaseToken: program.firebaseToken,
@@ -70,74 +129,108 @@ module.exports = function (argv) {
           grunt: program.grunt,
           email: program.email,
           force: program.force,
-          cache: program.cache
-        });
-        console.log('\n========================================================'.blue);
-        console.log(  '# We just created a new site on your computer.         #'.blue);
-        console.log(  '========================================================'.blue);
-        console.log(  '#'.blue + ' Next steps:' + '                                          #'.blue)
-        console.log(  '$ cd '.cyan + siteName.cyan )
-        console.log(  '$ npm start'.cyan )
-      }
-      catch (error) {
+          cache: program.cache,
+        })
+        console.log(
+          "\n========================================================".blue
+        )
+        console.log(
+          "# We just created a new site on your computer.         #".blue
+        )
+        console.log(
+          "========================================================".blue
+        )
+        console.log(
+          "#".blue +
+            " Next steps:" +
+            "                                          #".blue
+        )
+        console.log("$ cd ".cyan + siteName.cyan)
+        console.log("$ npm start".cyan)
+      } catch (error) {
         switch (error.code) {
           case errors.ERROR_MISMATCHING_PASSWPRDS:
-            console.log('========================================================'.red);
-            console.log('# Your passwords didn\'t match                         #'.red);
-            console.log('========================================================'.red);
-            console.log('# Happens to everyone. Why don\'t you give it another try.'.red);
-            console.log('# ---------------------------------------------------- #'.red);
+            console.log(
+              "========================================================".red
+            )
+            console.log(
+              "# Your passwords didn't match                         #".red
+            )
+            console.log(
+              "========================================================".red
+            )
+            console.log(
+              "# Happens to everyone. Why don't you give it another try.".red
+            )
+            console.log(
+              "# ---------------------------------------------------- #".red
+            )
             break
           case errors.ERROR_CREATE_INVALID_SITE_NAME:
-            console.log('Invalid sitename. Can only contain letters, numbers, and dashes.'.red)
+            console.log(
+              "Invalid sitename. Can only contain letters, numbers, and dashes."
+                .red
+            )
             break
           case errors.ERROR_FIREBASE_AUTH_WEAK_PASSWORD:
-            console.log('========================================================'.red)
-            console.log('# Your password is too weak.                           #'.red)
-            console.log('========================================================'.red)
-            console.log('# Try again with a strong password.                    #'.red)
-            console.log('# ---------------------------------------------------- #'.red)
+            console.log(
+              "========================================================".red
+            )
+            console.log(
+              "# Your password is too weak.                           #".red
+            )
+            console.log(
+              "========================================================".red
+            )
+            console.log(
+              "# Try again with a strong password.                    #".red
+            )
+            console.log(
+              "# ---------------------------------------------------- #".red
+            )
             break
           case errors.ERROR_CREATE_SITE_NAME_ALREADY_TAKEN:
-            console.log(`
+            console.log(
+              `
               ========================================================
-              # The site ${ siteName } is already taken              #
+              # The site ${siteName} is already taken              #
               ========================================================
               # This name has already been taken by another user.    #
               # Please try a different one. Or try initializing the
               # existing site using its code base.
-              # ---------------------------------------------------- #`.red)
+              # ---------------------------------------------------- #`.red
+            )
             break
           case errors.ERROR_CREATE_DOWNLOAD_GENERATE:
-            console.log('Could not download generator from npm.'.red)
+            console.log("Could not download generator from npm.".red)
             console.log(error)
             break
           default:
             console.log(error)
         }
       }
-    });
+    })
 
-  program.command('init <siteName>')
-    .description('Initializes a site with configuration files')
+  program
+    .command("init <siteName>")
+    .description("Initializes a site with configuration files")
     .action(async function (siteName) {
-      if ( Array.isArray( siteName ) )
-        siteName = siteName[0]
+      if (Array.isArray(siteName)) siteName = siteName[0]
 
       try {
-        siteName = siteName.toLowerCase();  
+        siteName = siteName.toLowerCase()
       } catch (error) {
         throw new Error(
-          'siteName: ' + siteName + '\n' +
-          'Requires a valid site name.' )
+          "siteName: " + siteName + "\n" + "Requires a valid site name."
+        )
       }
 
-      if(program.firebase) {
-        siteName = siteName.replace(/\./g, ',1');
+      if (program.firebase) {
+        siteName = siteName.replace(/\./g, ",1")
       }
-      
+
       try {
-        await require('./lib/init.js')({
+        await require("./lib/init.js")({
           siteName: siteName,
           firebaseName: program.firebase,
           firebaseToken: program.firebaseToken,
@@ -151,71 +244,82 @@ module.exports = function (argv) {
           node: program.node,
           grunt: program.grunt,
           email: program.email,
-          cache: program.cache
+          cache: program.cache,
         })
-        console.log('Done initializing.'.green)
-      }
-      catch (error) {
-        console.log(error)
-      }
-    });
-
-  program.command('github')
-    .description('Display the current git user/repo configuration for the site.')
-    .action(async function () {
-      try {
-        const { siteName, github } = await require('./lib/github.js')({
-          firebaseName: program.firebase,
-          firebaseToken: program.firebaseToken,
-          firebaseAPIKey: program.firebaseAPIKey,
-        })
-        console.log(`${ siteName } stored on github as ${ github }`)
-      }
-      catch (error) {
+        console.log("Done initializing.".green)
+      } catch (error) {
         console.log(error)
       }
     })
 
-  program.command('github:set <userRepo>')
-    .description('Set the git user/repo configuration for the current site directory.')
+  program
+    .command("github")
+    .description(
+      "Display the current git user/repo configuration for the site."
+    )
+    .action(async function () {
+      try {
+        const { siteName, github } = await require("./lib/github.js")({
+          firebaseName: program.firebase,
+          firebaseToken: program.firebaseToken,
+          firebaseAPIKey: program.firebaseAPIKey,
+        })
+        console.log(`${siteName} stored on github as ${github}`)
+      } catch (error) {
+        console.log(error)
+      }
+    })
+
+  program
+    .command("github:set <userRepo>")
+    .description(
+      "Set the git user/repo configuration for the current site directory."
+    )
     .action(async function (userRepo) {
-      if (typeof userRepo !== 'string') console.log('Set requires a user/repo name be passed in. For example: google/leveldb')
+      if (typeof userRepo !== "string")
+        console.log(
+          "Set requires a user/repo name be passed in. For example: google/leveldb"
+        )
 
       try {
-        const { siteName, github } = await require('./lib/github.js')({
+        const { siteName, github } = await require("./lib/github.js")({
           firebaseName: program.firebase,
           firebaseToken: program.firebaseToken,
           firebaseAPIKey: program.firebaseAPIKey,
           gitSet: userRepo,
         })
-        console.log( `Successfully set github user/repo configuration for ${ siteName } as: ${ github }` )
-      }
-      catch (error) {
+        console.log(
+          `Successfully set github user/repo configuration for ${siteName} as: ${github}`
+        )
+      } catch (error) {
         console.log(error)
       }
     })
 
-  program.command('github:remove')
-    .description('Remove the git user/repo configuration for the current site directory.')
+  program
+    .command("github:remove")
+    .description(
+      "Remove the git user/repo configuration for the current site directory."
+    )
     .action(async function () {
       try {
-        const { siteName } = await require('./lib/github.js')({
+        const { siteName } = await require("./lib/github.js")({
           firebaseName: program.firebase,
           firebaseToken: program.firebaseToken,
           firebaseAPIKey: program.firebaseAPIKey,
           gitRemove: true,
         })
-        console.log(`Removed github user/repo configure for ${ siteName }`)
-      }
-      catch (error) {
+        console.log(`Removed github user/repo configure for ${siteName}`)
+      } catch (error) {
         console.log(error)
       }
     })
 
-  program.command('deploys')
-    .description('List all deploy configuration for the current webhook site')
+  program
+    .command("deploys")
+    .description("List all deploy configuration for the current webhook site")
     .action(async function () {
-      const DeployConfiguration = require('./lib/deploys.js')
+      const DeployConfiguration = require("./lib/deploys.js")
       try {
         const { deploys } = await DeployConfiguration({
           firebaseName: program.firebase,
@@ -224,18 +328,21 @@ module.exports = function (argv) {
         })
 
         DeployConfiguration.log({ deploys })
-      }
-      catch (error) {
+      } catch (error) {
         console.log(error)
       }
     })
 
-  program.command('deploys:set <bucketName>')
-    .description('Set a bucket as the deploy destination. Use the --branch flag to override setting the deploy to use the current branch\'s set of templates.')
+  program
+    .command("deploys:set <bucketName>")
+    .description(
+      "Set a bucket as the deploy destination. Use the --branch flag to override setting the deploy to use the current branch's set of templates."
+    )
     .action(async function (bucketName) {
-      if (typeof bucketName !== 'string') console.log('Set requires a bucket name be passed in.')
+      if (typeof bucketName !== "string")
+        console.log("Set requires a bucket name be passed in.")
 
-      const DeployConfiguration = require('./lib/deploys.js')
+      const DeployConfiguration = require("./lib/deploys.js")
       try {
         const { deploys } = await DeployConfiguration({
           firebaseName: program.firebase,
@@ -246,18 +353,19 @@ module.exports = function (argv) {
         })
 
         DeployConfiguration.log({ deploys })
-      }
-      catch (error) {
+      } catch (error) {
         console.log(error)
       }
     })
 
-  program.command('deploys:remove <bucketName>')
-    .description('Remove a bucket as a deploy destination.')
+  program
+    .command("deploys:remove <bucketName>")
+    .description("Remove a bucket as a deploy destination.")
     .action(async function (bucketName) {
-      if ( typeof bucketName !== 'string' ) console.log( 'Set requires a bucket name be passed in.' )
-      
-      const DeployConfiguration = require('./lib/deploys.js')
+      if (typeof bucketName !== "string")
+        console.log("Set requires a bucket name be passed in.")
+
+      const DeployConfiguration = require("./lib/deploys.js")
       try {
         const { deploys } = await DeployConfiguration({
           firebaseName: program.firebase,
@@ -267,33 +375,33 @@ module.exports = function (argv) {
         })
 
         DeployConfiguration.log({ deploys })
-      }
-      catch (error) {
+      } catch (error) {
         console.log(error)
       }
     })
 
-
-  program.command('conf <siteName>')
-    .description('Initializes a site with configuration files. Assumes node_modules are already installed.')
+  program
+    .command("conf <siteName>")
+    .description(
+      "Initializes a site with configuration files. Assumes node_modules are already installed."
+    )
     .action(async function (siteName) {
-      if ( Array.isArray( siteName ) )
-        siteName = siteName[0]
+      if (Array.isArray(siteName)) siteName = siteName[0]
 
       try {
-        siteName = siteName.toLowerCase();  
+        siteName = siteName.toLowerCase()
       } catch (error) {
         throw new Error(
-          'siteName: ' + siteName + '\n' +
-          'Requires a valid site name.' )
+          "siteName: " + siteName + "\n" + "Requires a valid site name."
+        )
       }
 
-      if(program.firebase) {
-        siteName = siteName.replace(/\./g, ',1');
+      if (program.firebase) {
+        siteName = siteName.replace(/\./g, ",1")
       }
-      
+
       try {
-        await require('./lib/conf.js')({
+        await require("./lib/conf.js")({
           siteName: siteName,
           firebaseName: program.firebase,
           firebaseToken: program.firebaseToken,
@@ -307,35 +415,47 @@ module.exports = function (argv) {
           node: program.node,
           grunt: program.grunt,
           email: program.email,
-          cache: program.cache
+          cache: program.cache,
         })
-        console.log('Done preparing files.'.green);
-      }
-      catch (error) {
-        switch(error.code) {
+        console.log("Done preparing files.".green)
+      } catch (error) {
+        switch (error.code) {
           case errors.ERROR_FIREBASE_AUTH_WRONG_PASSWORD:
-            console.log('========================================================'.red);
-            console.log('# Password is incorrect                                #'.red);
-            console.log('========================================================'.red);
-            console.log('# Please doublecheck your records.'.red);
-            console.log(`# You can change your by attempting to log into any ${ program.platformName } CMS`.yellow);
-            console.log('# ---------------------------------------------------- #'.red);
-            break;
+            console.log(
+              "========================================================".red
+            )
+            console.log(
+              "# Password is incorrect                                #".red
+            )
+            console.log(
+              "========================================================".red
+            )
+            console.log("# Please doublecheck your records.".red)
+            console.log(
+              `# You can change your by attempting to log into any ${program.platformName} CMS`
+                .yellow
+            )
+            console.log(
+              "# ---------------------------------------------------- #".red
+            )
+            break
           case errors.ERROR_FIREBASE_AUTH_USER_NOT_FOUND:
-            console.log(`User not found. Please create a new account running the 'init' or 'create' command with this CLI. Otherwise create an accont on any ${ program.platformName } CMS.`)
-            break;
+            console.log(
+              `User not found. Please create a new account running the 'init' or 'create' command with this CLI. Otherwise create an accont on any ${program.platformName} CMS.`
+            )
+            break
           default:
-            console.log('Error setting up .firebase.conf')
+            console.log("Error setting up .firebase.conf")
         }
       }
-    });
+    })
 
-  program.command('list-sites')
-    .description('Lists all the sites that the user is an owner/user on')
+  program
+    .command("list-sites")
+    .description("Lists all the sites that the user is an owner/user on")
     .action(async function () {
-
       try {
-        const { userSites } = await require('./lib/list-sites.js')({
+        const { userSites } = await require("./lib/list-sites.js")({
           firebaseName: program.firebase,
           firebaseToken: program.firebaseToken,
           firebaseAPIKey: program.firebaseAPIKey,
@@ -343,34 +463,38 @@ module.exports = function (argv) {
           npm: program.npm,
           node: program.node,
           grunt: program.grunt,
-          email: program.email
+          email: program.email,
         })
-        if( userSites.owners ) {
-          console.log(`The ${ program.platformName } sites I'm an owner of:`.green)
-          for(var site in userSites.owners) {
+        if (userSites.owners) {
+          console.log(
+            `The ${program.platformName} sites I'm an owner of:`.green
+          )
+          for (var site in userSites.owners) {
             console.log(unescape(site))
           }
         }
-        if( userSites.users ) {
-          console.log(`The ${ program.platformName } sites I\'m a user of:`.blue)
-          for(var site in userSites.users) {
-            console.log(unescape( site ))
+        if (userSites.users) {
+          console.log(`The ${program.platformName} sites I\'m a user of:`.blue)
+          for (var site in userSites.users) {
+            console.log(unescape(site))
           }
         }
-        if(!userSites.users && !userSites.owners) {
-          console.log(`Not an owner or user for any site on ${ program.platformName }`.red)
+        if (!userSites.users && !userSites.owners) {
+          console.log(
+            `Not an owner or user for any site on ${program.platformName}`.red
+          )
         }
-      }
-      catch (error) {
+      } catch (error) {
         console.log(error)
       }
-    });
+    })
 
-  program.command('preset-build')
-    .description('Generates a .preset-data.json file from a webhook directory')
+  program
+    .command("preset-build")
+    .description("Generates a .preset-data.json file from a webhook directory")
     .action(async function () {
       try {
-        await require('./lib/preset-build.js')({
+        await require("./lib/preset-build.js")({
           firebaseName: program.firebase,
           firebaseToken: program.firebaseToken,
           firebaseAPIKey: program.firebaseAPIKey,
@@ -379,20 +503,22 @@ module.exports = function (argv) {
           node: program.node,
           grunt: program.grunt,
           email: program.email,
-          toFile: null,  // use the default
+          toFile: null, // use the default
           all: false,
         })
-      }
-      catch (error) {
+      } catch (error) {
         console.log(error)
       }
-    });
+    })
 
-  program.command('preset-build-all')
-    .description('Generates a .preset-data.json file from a webhook directory which includes data')
+  program
+    .command("preset-build-all")
+    .description(
+      "Generates a .preset-data.json file from a webhook directory which includes data"
+    )
     .action(async function () {
       try {
-        await require('./lib/preset-build.js')(true, {
+        await require("./lib/preset-build.js")(true, {
           firebaseName: program.firebase,
           firebaseToken: program.firebaseToken,
           firebaseAPIKey: program.firebaseAPIKey,
@@ -401,26 +527,27 @@ module.exports = function (argv) {
           node: program.node,
           grunt: program.grunt,
           email: program.email,
-          toFile: null,  // use the default
+          toFile: null, // use the default
           all: true,
         })
-      }
-      catch (error) {
+      } catch (error) {
         console.log(error)
       }
-    });
+    })
 
-  program.command('backup <toFile>')
-    .description('Generates a backup JSON file at the <toFile> from a webhook directory which includes data')
+  program
+    .command("backup <toFile>")
+    .description(
+      "Generates a backup JSON file at the <toFile> from a webhook directory which includes data"
+    )
     .action(async function (toFile) {
-      if ( Array.isArray( toFile ) ) {
+      if (Array.isArray(toFile)) {
         toFile = toFile[0]
-      }
-      else {
-        toFile = 'backup.json'
+      } else {
+        toFile = "backup.json"
       }
       try {
-        await require('./lib/preset-build.js')({
+        await require("./lib/preset-build.js")({
           firebaseName: program.firebase,
           firebaseToken: program.firebaseToken,
           firebaseAPIKey: program.firebaseAPIKey,
@@ -431,22 +558,24 @@ module.exports = function (argv) {
           toFile,
           all: true,
         })
-        console.log(`Wrote site backup to: ${ toFile }`.green )
-      }
-      catch (error) {
+        console.log(`Wrote site backup to: ${toFile}`.green)
+      } catch (error) {
         console.log(error)
       }
-    });
+    })
 
-  program.command('restore <fromFile>')
-    .description('Restores database to state captured in backup file, such as one generated from `wh backup`')
+  program
+    .command("restore <fromFile>")
+    .description(
+      "Restores database to state captured in backup file, such as one generated from `wh backup`"
+    )
     .action(async function (fromFile) {
-      if ( Array.isArray( fromFile ) ) {
+      if (Array.isArray(fromFile)) {
         fromFile = fromFile[0]
       }
 
       try {
-        await require('./lib/restore.js')({
+        await require("./lib/restore.js")({
           firebaseName: program.firebase,
           firebaseToken: program.firebaseToken,
           firebaseAPIKey: program.firebaseAPIKey,
@@ -455,19 +584,19 @@ module.exports = function (argv) {
           node: program.node,
           grunt: program.grunt,
           email: program.email,
-          fromFile: fromFile
+          fromFile: fromFile,
         })
-      }
-      catch (error) {
+      } catch (error) {
         console.log(error)
       }
-    });
+    })
 
-  program.command('update')
-    .description('Updates a webhook site with the latest generate code')
+  program
+    .command("update")
+    .description("Updates a webhook site with the latest generate code")
     .action(async function () {
       try {
-        await require('./lib/update.js')({
+        await require("./lib/update.js")({
           firebaseName: program.firebase,
           firebaseToken: program.firebaseToken,
           firebaseAPIKey: program.firebaseAPIKey,
@@ -480,23 +609,35 @@ module.exports = function (argv) {
           grunt: program.grunt,
           email: program.email,
           force: program.force,
-          cache: program.cache
+          cache: program.cache,
         })
-        console.log('========================================================'.blue);
-        console.log('# Update complete                                      #'.blue);
-        console.log('========================================================'.blue);
-        console.log('#'.blue + ' We updated your local copy.');
-        console.log('#'.blue + ' Run ' + 'wh deploy'.cyan + ' to deploy your changes live.')
-        console.log('# ---------------------------------------------------- #\n'.blue)
-      }
-      catch (error) {
+        console.log(
+          "========================================================".blue
+        )
+        console.log(
+          "# Update complete                                      #".blue
+        )
+        console.log(
+          "========================================================".blue
+        )
+        console.log("#".blue + " We updated your local copy.")
+        console.log(
+          "#".blue +
+            " Run " +
+            "wh deploy".cyan +
+            " to deploy your changes live."
+        )
+        console.log(
+          "# ---------------------------------------------------- #\n".blue
+        )
+      } catch (error) {
         console.log(error)
       }
-    });
+    })
 
-  async function pusher () {
+  async function pusher() {
     try {
-      await require('./lib/push.js')({
+      await require("./lib/push.js")({
         firebaseName: program.firebase,
         firebaseToken: program.firebaseToken,
         firebaseAPIKey: program.firebaseAPIKey,
@@ -506,68 +647,98 @@ module.exports = function (argv) {
         grunt: program.grunt,
         email: program.email,
         skipBuild: program.skipBuild,
-      });
-      console.log('========================================================'.blue);
-      console.log('# Success. Your templates were deployed.'.blue);
-      console.log('========================================================'.blue);
-    }
-    catch (error) {
+      })
+      console.log(
+        "========================================================".blue
+      )
+      console.log("# Success. Your templates were deployed.".blue)
+      console.log(
+        "========================================================".blue
+      )
+    } catch (error) {
       switch (error.code) {
         case errors.ERROR_IN_SITE_BUILD:
-          console.log('========================================================'.red);
-          console.log('# Deploy halted. Templates not pushed.'.red);
-          console.log('========================================================'.red);
-          console.log('# There was an error in your build and we don\'t want to'.red);
-          console.log('# deploy it to your live version. Please check over your'.red);
-          console.log('# templates before trying to deploy again.'.red);
-          console.log('# ---------------------------------------------------- #'.red)
-          break;
+          console.log(
+            "========================================================".red
+          )
+          console.log("# Deploy halted. Templates not pushed.".red)
+          console.log(
+            "========================================================".red
+          )
+          console.log(
+            "# There was an error in your build and we don't want to".red
+          )
+          console.log(
+            "# deploy it to your live version. Please check over your".red
+          )
+          console.log("# templates before trying to deploy again.".red)
+          console.log(
+            "# ---------------------------------------------------- #".red
+          )
+          break
         case errors.ERROR_PUSH_SITE_UPLOAD:
-          console.log('========================================================'.red);
-          console.log('# Deploy upload failed. Templates not pushed.'.red);
-          console.log('========================================================'.red);
-          console.log('# There was an error in your file upload.'.red);
-          console.log('# Try again shortly or check on the server status.'.red);
-          console.log('# ---------------------------------------------------- #'.red)
-          break;
+          console.log(
+            "========================================================".red
+          )
+          console.log("# Deploy upload failed. Templates not pushed.".red)
+          console.log(
+            "========================================================".red
+          )
+          console.log("# There was an error in your file upload.".red)
+          console.log("# Try again shortly or check on the server status.".red)
+          console.log(
+            "# ---------------------------------------------------- #".red
+          )
+          break
         default:
           console.log(error)
       }
     }
   }
 
-  program.command('push')
-    .description('Push webhook directory to server')
-    .action(pusher)
-    
-  program.command('deploy')
-    .description('Push webhook directory to server')
+  program
+    .command("push")
+    .description("Push webhook directory to server")
     .action(pusher)
 
-  program.command('map-domain <maskDomain> [contentDomain]')
-    .description('Configure the maskDomain to pull content from the contentDomain.')
-    .action(async function ( maskDomain, contentDomain ) {
+  program
+    .command("deploy")
+    .description("Push webhook directory to server")
+    .action(pusher)
+
+  program
+    .command("map-domain <maskDomain> [contentDomain]")
+    .description(
+      "Configure the maskDomain to pull content from the contentDomain."
+    )
+    .action(async function (maskDomain, contentDomain) {
       try {
-        await require('./lib/map-domain')({
+        await require("./lib/map-domain")({
           firebaseName: program.firebase,
           firebaseToken: program.firebaseToken,
           firebaseAPIKey: program.firebaseAPIKey,
           maskDomain: maskDomain,
           contentDomain: contentDomain,
         })
-        if (contentDomain) console.log(`Signaled server to set ${ maskDomain } to pull content from ${ contentDomain }`)
-        else console.log(`Signaled server to remove the domain ${ maskDomain } from content mapping configuration.`)
-      }
-      catch (error) {
+        if (contentDomain)
+          console.log(
+            `Signaled server to set ${maskDomain} to pull content from ${contentDomain}`
+          )
+        else
+          console.log(
+            `Signaled server to remove the domain ${maskDomain} from content mapping configuration.`
+          )
+      } catch (error) {
         console.log(error)
       }
     })
 
-  program.command('serve [port]')
-    .description('Serves a webhook site locally')
+  program
+    .command("serve [port]")
+    .description("Serves a webhook site locally")
     .action(async function (port) {
       try {
-        await require('./lib/serve.js')({
+        await require("./lib/serve.js")({
           port: port || null,
           firebaseName: program.firebase,
           firebaseToken: program.firebaseToken,
@@ -580,26 +751,27 @@ module.exports = function (argv) {
           cache: program.cache,
           skipBuild: program.skipBuild,
         })
-      }
-      catch (error) {
+      } catch (error) {
         switch (error.code) {
           case errors.ERROR_RUNNING_GRUNT_SERVE:
             console.log(error)
-            console.log('There was an error trying to run this command'.red);
-            console.log('Please make sure you have grunt installed'.red);
-            break;
+            console.log("There was an error trying to run this command".red)
+            console.log("Please make sure you have grunt installed".red)
+            break
           default:
             console.log(error)
         }
-        
       }
-    });
+    })
 
-  program.command('deploy-static [siteName]')
-    .description('Push a static snapshot of the current site, or --staticFolder to domains configured via `wh deploys`.')
+  program
+    .command("deploy-static [siteName]")
+    .description(
+      "Push a static snapshot of the current site, or --staticFolder to domains configured via `wh deploys`."
+    )
     .action(async function (siteName) {
       try {
-        await require('./lib/deploy-static.js')({
+        await require("./lib/deploy-static.js")({
           firebaseName: program.firebase,
           firebasefirebaseToken: program.firebaseToken,
           firebaseAPIKey: program.firebaseAPIKey,
@@ -609,39 +781,47 @@ module.exports = function (argv) {
           siteName: siteName,
           skipBuild: program.skipBuild,
           branch: program.branch,
-        }) 
-      }
-      catch (error) {
+        })
+      } catch (error) {
         console.log(error)
       }
     })
 
-  program.command('push-static [domain]')
-    .description('Push a static directory (--staticFolder) to the domain passed in as the first argument, augmented by the current git branch (or --gitBranch value).')
+  program
+    .command("push-static [domain]")
+    .description(
+      "Push a static directory (--staticFolder) to the domain passed in as the first argument, augmented by the current git branch (or --gitBranch value)."
+    )
     .action(async function (domain) {
       try {
-        const { directory, siteName, sitePath } = await require('./lib/push-static.js')({
-          debug: program.debug,
-          gcloud: program.gcloud,
-          branch: program.branch,
-          baseDomain: domain,
-          staticFolder: program.staticFolder,
-          staticPrefix: program.staticPrefix,
-        })
-        console.log( ''+
-          'Successfully uploaded directory to site.' +
-          '\nDirectory: ' + directory +
-          '\nSite:      ' + siteName +
-          '\nSite path: ' + sitePath)
-      }
-      catch (error) {
+        const { directory, siteName, sitePath } =
+          await require("./lib/push-static.js")({
+            debug: program.debug,
+            gcloud: program.gcloud,
+            branch: program.branch,
+            baseDomain: domain,
+            staticFolder: program.staticFolder,
+            staticPrefix: program.staticPrefix,
+          })
+        console.log(
+          "" +
+            "Successfully uploaded directory to site." +
+            "\nDirectory: " +
+            directory +
+            "\nSite:      " +
+            siteName +
+            "\nSite path: " +
+            sitePath
+        )
+      } catch (error) {
         console.log(error)
       }
     })
 
-  program.command('echo-options')
-    .description('Echos options passed into this command, used for debugging')
-    .action(function() {
+  program
+    .command("echo-options")
+    .description("Echos options passed into this command, used for debugging")
+    .action(function () {
       console.log(`firebase: ${program.firebase}`)
       console.log(`firebaseToken: ${program.firebaseToken}`)
       console.log(`firebaseAPIKey: ${program.firebaseAPIKey}`)
@@ -662,30 +842,29 @@ module.exports = function (argv) {
       console.log(`staticPrefix: ${program.staticPrefix}`)
       console.log(`force: ${program.force}`)
       console.log(`platformName: ${program.platformName}`)
-    });
+    })
 
-  program
-    .parse(argv);
+  program.parse(argv)
 
-  if (!program.args.length) program.help();
-};
+  if (!program.args.length) program.help()
+}
 
-module.exports.version = version;
+module.exports.version = version
 module.exports.lib = {
-  init: require('./lib/init.js'),
-  conf: require('./lib/conf.js'),
-  create: require('./lib/create.js'),
-  push: require( './lib/push.js' ),
-  deploys: require( './lib/deploys.js' ),
-  github: require( './lib/github.js' ),
-  mapDomain: require( './lib/map-domain.js' ),
-  listSites: require( './lib/list-sites.js' ),
-  presetBuild: require( './lib/preset-build.js' ),
-  restore: require( './lib/restore.js' ),
-  update: require( './lib/update.js' ),
-  serve: require( './lib/serve.js' ),
-  deployStatic: require('./lib/deploy-static.js'),
-  pushStatic: require('./lib/push-static.js'),
-  util: require('./lib/util/index.js'),
-  siteDir: require( './lib/util/site-dir.js' ),
+  init: require("./lib/init.js"),
+  conf: require("./lib/conf.js"),
+  create: require("./lib/create.js"),
+  push: require("./lib/push.js"),
+  deploys: require("./lib/deploys.js"),
+  github: require("./lib/github.js"),
+  mapDomain: require("./lib/map-domain.js"),
+  listSites: require("./lib/list-sites.js"),
+  presetBuild: require("./lib/preset-build.js"),
+  restore: require("./lib/restore.js"),
+  update: require("./lib/update.js"),
+  serve: require("./lib/serve.js"),
+  deployStatic: require("./lib/deploy-static.js"),
+  pushStatic: require("./lib/push-static.js"),
+  util: require("./lib/util/index.js"),
+  siteDir: require("./lib/util/site-dir.js"),
 }

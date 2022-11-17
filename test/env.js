@@ -1,9 +1,8 @@
-module.exports = function env () {
-
-  require('dotenv-safe').load( {
-    sample: __dirname + '/../.testenv.example',
-    path: __dirname + '/../.testenv',
-  } )
+module.exports = function env() {
+  require("dotenv-safe").load({
+    sample: __dirname + "/../.testenv.example",
+    path: __dirname + "/../.testenv",
+  })
 
   return {
     firebaseInterface: {
@@ -118,5 +117,4 @@ module.exports = function env () {
       platformName: process.env.PLATFORM_NAME,
     },
   }
-
 }
