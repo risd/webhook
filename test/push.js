@@ -1,18 +1,25 @@
-const test = require( 'tape' )
-const push = require( '../lib/push.js' )
-const env = require( './env.js' )()
+const path = require("node:path")
+const test = require("tape")
+const push = require("../lib/push.js")
+const env = require("./env.js")()
 
-test( 'push-without-error-module', function ( t ) {
-  t.plan( 1 )
+test.onFinish(process.exit)
 
-  const pushOptions = Object.assign( {}, env.push, {
-    branch: 'webhook-test',
-    skipBuild: 'true',
+test("push-without-error-module", async function (t) {
+  t.plan(1)
+
+  const pushOptions = {
+    ...env.push,
+    branch: "webhook-test",
+    skipBuild: "true",
     http: false,
-    dirName: './test/fake-site',
-  } )
+    cwd: path.join(process.cwd(), "test", "fake-site"),
+  }
 
-  push( pushOptions, function onPush ( error ) {
-    t.notOk( error, 'finishes without error' )
-  } )
-} )
+  try {
+    await push(pushOptions)
+    t.ok(true)
+  } catch (error) {
+    t.fail(error)
+  }
+})
