@@ -3,7 +3,7 @@ const downloadGenerate = require( '../lib/util/download-generate.js' )
 const generateExtract = require( '../lib/util/generate-extract.js' )
 const env = require( './env.js' )()
 
-const fs = require( 'fs' )
+const fs = require( 'node:fs' )
 const path = require( 'path' )
 const testDir = path.join(process.cwd(), 'test')
 const extractToPath = path.join(testDir, 'package' )
