@@ -15,3 +15,10 @@ npm-debug.log
 node_modules
 
 .testenv
+
+.wh-generate
+test/wh-automated-test*
+test/.generate-repo.tgz
+test/fake-site/.push.tgz
+test/fake-site/.push
+test/package
