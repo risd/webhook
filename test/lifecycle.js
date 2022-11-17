@@ -13,6 +13,7 @@ const deployStatic = require("../lib/deploy-static.js")
 const pushStatic = require("../lib/push-static.js")
 const update = require("../lib/update.js")
 const env = require("./env.js")()
+const rimraf = require("rimraf")
 
 const siteName = `wh-automated-test-${new Date()
   .toISOString()
@@ -23,8 +24,7 @@ const absSitePath = path.join(siteParentDir, siteName)
 const siteBuildDir = path.join(absSitePath, ".build")
 
 test.onFinish(() => {
-  fs.unlinkSync(absSitePath)
-  process.exit()
+  rimraf(absSitePath, process.exit)
 })
 
 test("create-without-error", async (t) => {

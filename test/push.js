@@ -1,3 +1,4 @@
+const path = require("node:path")
 const test = require("tape")
 const push = require("../lib/push.js")
 const env = require("./env.js")()
@@ -12,7 +13,7 @@ test("push-without-error-module", async function (t) {
     branch: "webhook-test",
     skipBuild: "true",
     http: false,
-    cwd: "./test/fake-site",
+    cwd: path.join(process.cwd(), "test", "fake-site"),
   }
 
   try {
