@@ -624,14 +624,14 @@ module.exports = function (argv) {
     .action(async function (domain) {
       const PushStatic = require("./lib/push-static.js")
       try {
-        const { directory, siteName, sitePath } = await {
+        const { directory, siteName, sitePath } = await PushStatic({
           debug: program.debug,
           gcloud: program.gcloud,
           branch: program.branch,
           baseDomain: domain,
           staticFolder: program.staticFolder,
           staticPrefix: program.staticPrefix,
-        }
+        })
         PushStatic.cliLogSuccess({ directory, siteName, sitePath })
       } catch (error) {
         PushStatic.cliLogError(error)
