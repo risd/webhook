@@ -1,10 +1,10 @@
 process.env.DEBUG = "*"
-require("colors")
 const program = require("commander")
 const errors = require("./lib/errors.js")
 const version = require("./package.json").version
 const printIntro = require("./lib/util/print-intro")
 const unescape = require("./lib/util/unescape-site")
+const cliCmd = "wh"
 
 module.exports = function (argv) {
   program
@@ -113,8 +113,10 @@ module.exports = function (argv) {
 
       printIntro(program.platformName)
 
+      const Create = require("./lib/create.js")
+
       try {
-        await require("./lib/create.js")({
+        await Create({
           siteName: siteName,
           firebaseName: program.firebase,
           firebaseToken: program.firebaseToken,
@@ -131,83 +133,9 @@ module.exports = function (argv) {
           force: program.force,
           cache: program.cache,
         })
-        console.log(
-          "\n========================================================".blue
-        )
-        console.log(
-          "# We just created a new site on your computer.         #".blue
-        )
-        console.log(
-          "========================================================".blue
-        )
-        console.log(
-          "#".blue +
-            " Next steps:" +
-            "                                          #".blue
-        )
-        console.log("$ cd ".cyan + siteName.cyan)
-        console.log("$ npm start".cyan)
+        Create.cliLogSuccess({ siteName })
       } catch (error) {
-        switch (error.code) {
-          case errors.ERROR_MISMATCHING_PASSWPRDS:
-            console.log(
-              "========================================================".red
-            )
-            console.log(
-              "# Your passwords didn't match                         #".red
-            )
-            console.log(
-              "========================================================".red
-            )
-            console.log(
-              "# Happens to everyone. Why don't you give it another try.".red
-            )
-            console.log(
-              "# ---------------------------------------------------- #".red
-            )
-            break
-          case errors.ERROR_CREATE_INVALID_SITE_NAME:
-            console.log(
-              "Invalid sitename. Can only contain letters, numbers, and dashes."
-                .red
-            )
-            break
-          case errors.ERROR_FIREBASE_AUTH_WEAK_PASSWORD:
-            console.log(
-              "========================================================".red
-            )
-            console.log(
-              "# Your password is too weak.                           #".red
-            )
-            console.log(
-              "========================================================".red
-            )
-            console.log(
-              "# Try again with a strong password.                    #".red
-            )
-            console.log(
-              "# ---------------------------------------------------- #".red
-            )
-            break
-          case errors.ERROR_CREATE_SITE_NAME_ALREADY_TAKEN:
-            console.log(
-              `
-              ========================================================
-              # The site ${siteName} is already taken              #
-              ========================================================
-              # This name has already been taken by another user.    #
-              # Please try a different one. Or try initializing the
-              # existing site using its code base.
-              # ---------------------------------------------------- #`.red
-            )
-            break
-          case errors.ERROR_CREATE_DOWNLOAD_GENERATE:
-            console.log("Could not download generator from npm.".red)
-            console.log(error)
-            break
-          default:
-            console.log(error)
-        }
+        Create.cliLogError(error, { siteName })
       }
     })
 
@@ -229,8 +157,10 @@ module.exports = function (argv) {
         siteName = siteName.replace(/\./g, ",1")
       }
 
+      const Init = require("./lib/init.js")
+
       try {
-        await require("./lib/init.js")({
+        await Init({
           siteName: siteName,
           firebaseName: program.firebase,
           firebaseToken: program.firebaseToken,
@@ -246,9 +176,9 @@ module.exports = function (argv) {
           email: program.email,
           cache: program.cache,
         })
-        console.log("Done initializing.".green)
+        Init.cliLogSuccess()
       } catch (error) {
-        console.log(error)
+        Init.cliLogError(error)
       }
     })
 
@@ -258,15 +188,17 @@ module.exports = function (argv) {
       "Display the current git user/repo configuration for the site."
     )
     .action(async function () {
+      const GithubConfiguration = require("./lib/github")
+
       try {
-        const { siteName, github } = await require("./lib/github.js")({
+        const { siteName, github } = await GithubConfiguration({
           firebaseName: program.firebase,
           firebaseToken: program.firebaseToken,
           firebaseAPIKey: program.firebaseAPIKey,
         })
-        console.log(`${siteName} stored on github as ${github}`)
+        GithubConfiguration.cliLogSuccessGet({ siteName, github })
       } catch (error) {
-        console.log(error)
+        GithubConfiguration.cliLogError(error)
       }
     })
 
@@ -281,18 +213,19 @@ module.exports = function (argv) {
           "Set requires a user/repo name be passed in. For example: google/leveldb"
         )
 
+      const GithubConfiguration = require("./lib/github")
+
       try {
-        const { siteName, github } = await require("./lib/github.js")({
+        const { siteName, github } = await GithubConfiguration({
           firebaseName: program.firebase,
           firebaseToken: program.firebaseToken,
           firebaseAPIKey: program.firebaseAPIKey,
           gitSet: userRepo,
         })
-        console.log(
-          `Successfully set github user/repo configuration for ${siteName} as: ${github}`
-        )
+
+        GithubConfiguration.cliLogSuccessSet({ siteName, github })
       } catch (error) {
-        console.log(error)
+        GithubConfiguration.cliLogError(error)
       }
     })
 
@@ -302,16 +235,17 @@ module.exports = function (argv) {
       "Remove the git user/repo configuration for the current site directory."
     )
     .action(async function () {
+      const GithubConfiguration = require("./lib/github")
       try {
-        const { siteName } = await require("./lib/github.js")({
+        const { siteName } = await GithubConfiguration({
           firebaseName: program.firebase,
           firebaseToken: program.firebaseToken,
           firebaseAPIKey: program.firebaseAPIKey,
           gitRemove: true,
         })
-        console.log(`Removed github user/repo configure for ${siteName}`)
+        GithubConfiguration.cliLogSuccessRemove({ siteName })
       } catch (error) {
-        console.log(error)
+        GithubConfiguration.cliLogError(error)
       }
     })
 
@@ -327,9 +261,9 @@ module.exports = function (argv) {
           firebaseAPIKey: program.firebaseAPIKey,
         })
 
-        DeployConfiguration.log({ deploys })
+        DeployConfiguration.cliLogSuccess({ deploys })
       } catch (error) {
-        console.log(error)
+        DeployConfiguration.cliLogError(error)
       }
     })
 
@@ -351,10 +285,9 @@ module.exports = function (argv) {
           branch: program.branch,
           bucketSet: bucketName,
         })
-
-        DeployConfiguration.log({ deploys })
+        DeployConfiguration.cliLogSuccess({ deploys })
       } catch (error) {
-        console.log(error)
+        DeployConfiguration.cliLogError(error)
       }
     })
 
@@ -374,9 +307,9 @@ module.exports = function (argv) {
           bucketRemove: bucketName,
         })
 
-        DeployConfiguration.log({ deploys })
+        DeployConfiguration.cliLogSuccess({ deploys })
       } catch (error) {
-        console.log(error)
+        DeployConfiguration.cliLogError(error)
       }
     })
 
@@ -400,8 +333,10 @@ module.exports = function (argv) {
         siteName = siteName.replace(/\./g, ",1")
       }
 
+      const Conf = require("./lib/conf.js")
+
       try {
-        await require("./lib/conf.js")({
+        await Conf({
           siteName: siteName,
           firebaseName: program.firebase,
           firebaseToken: program.firebaseToken,
@@ -417,36 +352,9 @@ module.exports = function (argv) {
           email: program.email,
           cache: program.cache,
         })
-        console.log("Done preparing files.".green)
+        Conf.cliLogSuccess()
       } catch (error) {
-        switch (error.code) {
-          case errors.ERROR_FIREBASE_AUTH_WRONG_PASSWORD:
-            console.log(
-              "========================================================".red
-            )
-            console.log(
-              "# Password is incorrect                                #".red
-            )
-            console.log(
-              "========================================================".red
-            )
-            console.log("# Please doublecheck your records.".red)
-            console.log(
-              `# You can change your by attempting to log into any ${program.platformName} CMS`
-                .yellow
-            )
-            console.log(
-              "# ---------------------------------------------------- #".red
-            )
-            break
-          case errors.ERROR_FIREBASE_AUTH_USER_NOT_FOUND:
-            console.log(
-              `User not found. Please create a new account running the 'init' or 'create' command with this CLI. Otherwise create an accont on any ${program.platformName} CMS.`
-            )
-            break
-          default:
-            console.log("Error setting up .firebase.conf")
-        }
+        Conf.cliLogError(error, { platformName: program.platformName })
       }
     })
 
@@ -454,8 +362,9 @@ module.exports = function (argv) {
     .command("list-sites")
     .description("Lists all the sites that the user is an owner/user on")
     .action(async function () {
+      const ListSites = require("./lib/list-sites.js")
       try {
-        const { userSites } = await require("./lib/list-sites.js")({
+        const { userSites } = await ListSites({
           firebaseName: program.firebase,
           firebaseToken: program.firebaseToken,
           firebaseAPIKey: program.firebaseAPIKey,
@@ -465,27 +374,9 @@ module.exports = function (argv) {
           grunt: program.grunt,
           email: program.email,
         })
-        if (userSites.owners) {
-          console.log(
-            `The ${program.platformName} sites I'm an owner of:`.green
-          )
-          for (var site in userSites.owners) {
-            console.log(unescape(site))
-          }
-        }
-        if (userSites.users) {
-          console.log(`The ${program.platformName} sites I\'m a user of:`.blue)
-          for (var site in userSites.users) {
-            console.log(unescape(site))
-          }
-        }
-        if (!userSites.users && !userSites.owners) {
-          console.log(
-            `Not an owner or user for any site on ${program.platformName}`.red
-          )
-        }
+        ListSites.cliLogSuccess({ userSites })
       } catch (error) {
-        console.log(error)
+        ListSites.cliLogError(error)
       }
     })
 
@@ -493,8 +384,9 @@ module.exports = function (argv) {
     .command("preset-build")
     .description("Generates a .preset-data.json file from a webhook directory")
     .action(async function () {
+      const PresetBuild = require("./lib/preset-build.js")
       try {
-        await require("./lib/preset-build.js")({
+        const { pathToWrite } = await PresetBuild({
           firebaseName: program.firebase,
           firebaseToken: program.firebaseToken,
           firebaseAPIKey: program.firebaseAPIKey,
@@ -506,8 +398,9 @@ module.exports = function (argv) {
           toFile: null, // use the default
           all: false,
         })
+        PresetBuild.cliLogSuccess({ pathToWrite })
       } catch (error) {
-        console.log(error)
+        PresetBuild.cliLogError(error)
       }
     })
 
@@ -517,8 +410,9 @@ module.exports = function (argv) {
       "Generates a .preset-data.json file from a webhook directory which includes data"
     )
     .action(async function () {
+      const PresetBuild = require("./lib/preset-build.js")
       try {
-        await require("./lib/preset-build.js")(true, {
+        const { pathToWrite } = await PresetBuild({
           firebaseName: program.firebase,
           firebaseToken: program.firebaseToken,
           firebaseAPIKey: program.firebaseAPIKey,
@@ -530,8 +424,9 @@ module.exports = function (argv) {
           toFile: null, // use the default
           all: true,
         })
+        PresetBuild.cliLogSuccess({ pathToWrite })
       } catch (error) {
-        console.log(error)
+        PresetBuild.cliLogError(error)
       }
     })
 
@@ -546,8 +441,9 @@ module.exports = function (argv) {
       } else {
         toFile = "backup.json"
       }
+      const PresetBuild = require("./lib/preset-build.js")
       try {
-        await require("./lib/preset-build.js")({
+        const { pathToWrite } = await PresetBuild({
           firebaseName: program.firebase,
           firebaseToken: program.firebaseToken,
           firebaseAPIKey: program.firebaseAPIKey,
@@ -558,9 +454,9 @@ module.exports = function (argv) {
           toFile,
           all: true,
         })
-        console.log(`Wrote site backup to: ${toFile}`.green)
+        PresetBuild.cliLogSuccess({ pathToWrite })
       } catch (error) {
-        console.log(error)
+        PresetBuild.cliLogError(error)
       }
     })
 
@@ -574,8 +470,10 @@ module.exports = function (argv) {
         fromFile = fromFile[0]
       }
 
+      const Restore = require("./lib/restore.js")
+
       try {
-        await require("./lib/restore.js")({
+        const { updated } = await Restore({
           firebaseName: program.firebase,
           firebaseToken: program.firebaseToken,
           firebaseAPIKey: program.firebaseAPIKey,
@@ -586,8 +484,9 @@ module.exports = function (argv) {
           email: program.email,
           fromFile: fromFile,
         })
+        Restore.cliLogSuccess({ fromFile, updated })
       } catch (error) {
-        console.log(error)
+        Restore.cliLogError(error, { fromFile })
       }
     })
 
@@ -595,8 +494,9 @@ module.exports = function (argv) {
     .command("update")
     .description("Updates a webhook site with the latest generate code")
     .action(async function () {
+      const Update = require("./lib/update.js")
       try {
-        await require("./lib/update.js")({
+        await Update({
           firebaseName: program.firebase,
           firebaseToken: program.firebaseToken,
           firebaseAPIKey: program.firebaseAPIKey,
@@ -611,33 +511,16 @@ module.exports = function (argv) {
           force: program.force,
           cache: program.cache,
         })
-        console.log(
-          "========================================================".blue
-        )
-        console.log(
-          "# Update complete                                      #".blue
-        )
-        console.log(
-          "========================================================".blue
-        )
-        console.log("#".blue + " We updated your local copy.")
-        console.log(
-          "#".blue +
-            " Run " +
-            "wh deploy".cyan +
-            " to deploy your changes live."
-        )
-        console.log(
-          "# ---------------------------------------------------- #\n".blue
-        )
+        Update.cliLogSuccess({ cliCmd })
       } catch (error) {
-        console.log(error)
+        Update.cliLogError(error)
       }
     })
 
   async function pusher() {
+    const Push = require("./lib/push.js")
     try {
-      await require("./lib/push.js")({
+      await Push({
         firebaseName: program.firebase,
         firebaseToken: program.firebaseToken,
         firebaseAPIKey: program.firebaseAPIKey,
@@ -648,51 +531,9 @@ module.exports = function (argv) {
         email: program.email,
         skipBuild: program.skipBuild,
       })
-      console.log(
-        "========================================================".blue
-      )
-      console.log("# Success. Your templates were deployed.".blue)
-      console.log(
-        "========================================================".blue
-      )
+      Push.cliLogSuccess()
     } catch (error) {
-      switch (error.code) {
-        case errors.ERROR_IN_SITE_BUILD:
-          console.log(
-            "========================================================".red
-          )
-          console.log("# Deploy halted. Templates not pushed.".red)
-          console.log(
-            "========================================================".red
-          )
-          console.log(
-            "# There was an error in your build and we don't want to".red
-          )
-          console.log(
-            "# deploy it to your live version. Please check over your".red
-          )
-          console.log("# templates before trying to deploy again.".red)
-          console.log(
-            "# ---------------------------------------------------- #".red
-          )
-          break
-        case errors.ERROR_PUSH_SITE_UPLOAD:
-          console.log(
-            "========================================================".red
-          )
-          console.log("# Deploy upload failed. Templates not pushed.".red)
-          console.log(
-            "========================================================".red
-          )
-          console.log("# There was an error in your file upload.".red)
-          console.log("# Try again shortly or check on the server status.".red)
-          console.log(
-            "# ---------------------------------------------------- #".red
-          )
-          break
-        default:
-          console.log(error)
-      }
+      Push.cliLogError(error)
     }
   }
 
@@ -712,24 +553,18 @@ module.exports = function (argv) {
       "Configure the maskDomain to pull content from the contentDomain."
     )
     .action(async function (maskDomain, contentDomain) {
+      const MapDomain = require("./lib/map-domain")
       try {
-        await require("./lib/map-domain")({
+        await MapDomain({
           firebaseName: program.firebase,
           firebaseToken: program.firebaseToken,
           firebaseAPIKey: program.firebaseAPIKey,
-          maskDomain: maskDomain,
-          contentDomain: contentDomain,
+          maskDomain,
+          contentDomain,
         })
-        if (contentDomain)
-          console.log(
-            `Signaled server to set ${maskDomain} to pull content from ${contentDomain}`
-          )
-        else
-          console.log(
-            `Signaled server to remove the domain ${maskDomain} from content mapping configuration.`
-          )
+        MapDomain.cliLogSuccess({ maskDomain, contentDomain })
       } catch (error) {
-        console.log(error)
+        MapDomain.cliLogError(error)
       }
     })
 
@@ -737,8 +572,9 @@ module.exports = function (argv) {
     .command("serve [port]")
     .description("Serves a webhook site locally")
     .action(async function (port) {
+      const Serve = require("./lib/serve.js")
       try {
-        await require("./lib/serve.js")({
+        await Serve({
           port: port || null,
           firebaseName: program.firebase,
           firebaseToken: program.firebaseToken,
@@ -752,15 +588,7 @@ module.exports = function (argv) {
           skipBuild: program.skipBuild,
         })
       } catch (error) {
-        switch (error.code) {
-          case errors.ERROR_RUNNING_GRUNT_SERVE:
-            console.log(error)
-            console.log("There was an error trying to run this command".red)
-            console.log("Please make sure you have grunt installed".red)
-            break
-          default:
-            console.log(error)
-        }
+        Serve.cliLogError(error)
       }
     })
 
@@ -770,8 +598,9 @@ module.exports = function (argv) {
       "Push a static snapshot of the current site, or --staticFolder to domains configured via `wh deploys`."
     )
     .action(async function (siteName) {
+      const DeployStatic = require("./lib/deploy-static.js")
       try {
-        await require("./lib/deploy-static.js")({
+        await DeployStatic({
           firebaseName: program.firebase,
           firebasefirebaseToken: program.firebaseToken,
           firebaseAPIKey: program.firebaseAPIKey,
@@ -783,7 +612,7 @@ module.exports = function (argv) {
           branch: program.branch,
         })
       } catch (error) {
-        console.log(error)
+        DeployStatic.cliLogError(error)
       }
     })
 
@@ -793,28 +622,19 @@ module.exports = function (argv) {
       "Push a static directory (--staticFolder) to the domain passed in as the first argument, augmented by the current git branch (or --gitBranch value)."
     )
     .action(async function (domain) {
+      const PushStatic = require("./lib/push-static.js")
       try {
-        const { directory, siteName, sitePath } =
-          await require("./lib/push-static.js")({
-            debug: program.debug,
-            gcloud: program.gcloud,
-            branch: program.branch,
-            baseDomain: domain,
-            staticFolder: program.staticFolder,
-            staticPrefix: program.staticPrefix,
-          })
-        console.log(
-          "" +
-            "Successfully uploaded directory to site." +
-            "\nDirectory: " +
-            directory +
-            "\nSite:      " +
-            siteName +
-            "\nSite path: " +
-            sitePath
-        )
+        const { directory, siteName, sitePath } = await {
+          debug: program.debug,
+          gcloud: program.gcloud,
+          branch: program.branch,
+          baseDomain: domain,
+          staticFolder: program.staticFolder,
+          staticPrefix: program.staticPrefix,
+        }
+        PushStatic.cliLogSuccess({ directory, siteName, sitePath })
       } catch (error) {
-        console.log(error)
+        PushStatic.cliLogError(error)
       }
     })
 
