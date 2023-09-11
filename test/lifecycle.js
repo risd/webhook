@@ -140,7 +140,6 @@ test("deploy-config", async (t) => {
 
   try {
     const defaultDeployConfiguration = await deploys(getDeploysOptions)
-    console.log(deploys.log(defaultDeployConfiguration))
     t.ok(true, "Sets default deploy configuration.")
   } catch (error) {
     console.log(error)
@@ -205,7 +204,7 @@ test("push-static", async (t) => {
   try {
     const options = {
       ...env.pushStatic,
-      baseDomain: "wh-automated-test.risd.systems",
+      baseDomain: `wh-automated-test.${env.create.platformDomain}`,
       staticFolder: siteBuildDir,
       branch: "master",
     }
