@@ -30,7 +30,7 @@
   "readmeFile": "README.md",
   "dependencies": {
     "async": "^3.2.3",
-    "axios": "^0.21.4",
+    "axios": "^1.6.2",
     "colors": "~0.6.2",
     "commander": "~2.1.0",
     "cpr": "^3.0.1",
