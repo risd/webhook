@@ -20,6 +20,7 @@ test("push-without-error-module", async function (t) {
     await push(pushOptions)
     t.ok(true)
   } catch (error) {
+    console.error(error)
     t.fail(error)
   }
 })
