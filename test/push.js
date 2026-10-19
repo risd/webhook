@@ -13,7 +13,7 @@ test("push-without-error-module", async function (t) {
     branch: "webhook-test",
     skipBuild: "true",
     http: false,
-    cwd: path.join(process.cwd(), "test", "fake-site"),
+    cwd: path.join(process.cwd(), "test", "mock-site"),
   }
 
   try {

@@ -6,7 +6,7 @@ const fs = require("node:fs")
 const path = require("path")
 
 const filesToArchive = ["Gruntfile.js", "package.json", "libs/generate.js"]
-const archiveDirectory = path.join("test", "fake-site")
+const archiveDirectory = path.join("test", "mock-site")
 const deployArchivePath = path.join(archiveDirectory, ".push.tgz")
 const extractCwd = path.join(archiveDirectory, ".push")
 

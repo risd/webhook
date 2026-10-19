@@ -22,3 +22,4 @@ test/.generate-repo.tgz
 test/fake-site/.push.tgz
 test/fake-site/.push
 test/package
+test/wh-automated-test*
