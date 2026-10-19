@@ -1,7 +1,6 @@
 const test = require("tape")
 const path = require("node:path")
 const pglob = require("../lib/util/glob-promise.js")
-const { hash } = require("node:crypto")
 
 test("mock-site", async (t) => {
   const files = await pglob("**/*", {
