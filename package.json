@@ -1,6 +1,6 @@
 {
   "name": "@risd/wh",
-  "version": "3.0.14",
+  "version": "4.0.0",
   "description": "Static site generator tooling for interating with a webhook publishing platform instance.",
   "keywords": [
     "webhook",
@@ -15,8 +15,8 @@
     "url": "git://github.com/risd/webhook.git"
   },
   "engines": {
-    "node": ">= 16.4",
-    "npm": ">= 7.18"
+    "node": ">= 22.13",
+    "npm": ">= 11"
   },
   "scripts": {
     "test": "tape test/*.js",
@@ -30,24 +30,23 @@
   "readmeFile": "README.md",
   "dependencies": {
     "async": "^3.2.3",
-    "axios": "^1.6.2",
     "colors": "~0.6.2",
     "commander": "~2.1.0",
     "cpr": "^3.0.1",
     "debug": "^4.1.0",
-    "firebase": "^10.4.0",
+    "firebase": "^12.19.0",
     "form-data": "^4.0.0",
-    "gcloud-site-dir": "^3.0.0",
+    "gcloud-site-dir": "^4.0.0",
     "git-state": "^4.0.0",
     "github": "~0.1.12",
-    "glob": "^7.1.7",
-    "inquirer": "^8.2.0",
+    "glob": "^13.0.6",
+    "inquirer": "^9.3.8",
     "mime": "^2.5.2",
     "mkdirp": "^1.0.4",
     "node-uuid": "^1.4.7",
     "rimraf": "^3.0.2",
-    "tar": "^6.1.11",
-    "webhook-deploy-configuration": "^3.0.3",
+    "tar": "^7.5.22",
+    "webhook-deploy-configuration": "^5.0.0",
     "win-spawn": "~2.0.0"
   },
   "devDependencies": {
