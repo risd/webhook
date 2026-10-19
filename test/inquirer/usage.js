@@ -1,4 +1,4 @@
-var inquirer = require("inquirer")
+const { default: inquirer } = require("inquirer")
 var async = require("async")
 
 async.series([confirm, input, password], function () {

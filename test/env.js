@@ -81,14 +81,14 @@ module.exports = function env() {
       platformDomain: process.env.PLATFORM_DOMAIN,
       firebaseName: process.env.FIREBASE_NAME,
       firebaseAPIKey: process.env.FIREBASE_API_KEY,
-      gcloud: process.env.FIREBASE_SERVICE_ACCOUNT_KEY,
+      gcloud: process.env.GOOGLE_SERVICE_ACCOUNT_KEY,
     },
     pushStatic: {
       email: process.env.WEBHOOK_USERNAME,
       password: process.env.WEBHOOK_PASSWORD,
       platformName: process.env.PLATFORM_NAME,
       platformDomain: process.env.PLATFORM_DOMAIN,
-      gcloud: process.env.FIREBASE_SERVICE_ACCOUNT_KEY,
+      gcloud: process.env.GOOGLE_SERVICE_ACCOUNT_KEY,
     },
     update: {
       email: process.env.WEBHOOK_USERNAME,
@@ -110,7 +110,7 @@ module.exports = function env() {
       siteKey: process.env.WEBHOOK_SITEKEY,
     },
     utilSiteDir: {
-      keyFile: process.env.FIREBASE_SERVICE_ACCOUNT_KEY,
+      keyFile: process.env.GOOGLE_SERVICE_ACCOUNT_KEY,
       siteName: process.env.WEBHOOK_SITENAME,
     },
     utilPackageUpdate: {

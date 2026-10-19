@@ -13,13 +13,14 @@ test("push-without-error-module", async function (t) {
     branch: "webhook-test",
     skipBuild: "true",
     http: false,
-    cwd: path.join(process.cwd(), "test", "fake-site"),
+    cwd: path.join(process.cwd(), "test", "mock-site"),
   }
 
   try {
     await push(pushOptions)
     t.ok(true)
   } catch (error) {
+    console.error(error)
     t.fail(error)
   }
 })
